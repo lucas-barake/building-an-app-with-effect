@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src/**/*.test.ts"],
+  "references": [
+    { "path": "tsconfig.src.json" },
+    { "path": "../domain" },
+    { "path": "../database" }
+  ],
+  "compilerOptions": {
+    "types": ["node"],
+    "tsBuildInfoFile": ".tsbuildinfo/test.tsbuildinfo",
+    "rootDir": "src",
+    "noEmit": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@org/domain": ["../domain/src/index.js"],
+      "@org/domain/*": ["../domain/src/*.js"],
+      "@org/database": ["../database/src/index.js"],
+      "@org/database/*": ["../database/src/*.js"]
+    }
+  }
+}

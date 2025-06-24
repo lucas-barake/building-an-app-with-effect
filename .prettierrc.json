@@ -1,0 +1,19 @@
+{
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-sql",
+    "prettier-plugin-embed",
+    "prettier-plugin-organize-imports"
+  ],
+  "endOfLine": "auto",
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "tailwindStylesheet": "./packages/client/src/index.css",
+  "language": "postgresql",
+  "keywordCase": "upper",
+  "embeddedSqlTags": ["sql"]
+}

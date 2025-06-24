@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [],
+  "exclude": [],
+  "references": [
+    { "path": "packages/domain" },
+    { "path": "packages/server" },
+    { "path": "packages/client" },
+    { "path": "packages/database" }
+  ]
+}

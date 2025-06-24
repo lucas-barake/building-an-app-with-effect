@@ -1,0 +1,48 @@
+{
+  "name": "@org/domain",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The domain template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucas-barake/rpc-tutorial.git",
+    "directory": "packages/domain"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "build-annotate": "babel build/esm --plugins annotate-pure-calls --out-dir build/esm --source-maps",
+    "check": "tsc -b tsconfig.json",
+    "test": "vitest --run",
+    "coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@effect/platform": "*",
+    "@effect/rpc": "*",
+    "effect": "*"
+  },
+  "effect": {
+    "generateExports": {
+      "include": [
+        "**/*.ts"
+      ]
+    },
+    "generateIndex": {
+      "include": [
+        "**/*.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@effect/build-utils": "^0.8.3"
+  }
+}

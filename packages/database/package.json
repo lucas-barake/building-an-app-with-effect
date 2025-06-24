@@ -1,0 +1,58 @@
+{
+  "name": "@org/database",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The database template",
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json",
+    "./*": "./src/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucas-barake/rpc-tutorial.git",
+    "directory": "packages/database"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "build-esm": "tsc -b tsconfig.build.json",
+    "build-cjs": "babel build/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir build/cjs --source-maps",
+    "build-annotate": "babel build/esm --plugins annotate-pure-calls --out-dir build/esm --source-maps",
+    "check": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "migrate": "tsx ./src/scripts/migrator.ts",
+    "reset": "bun ./src/scripts/reset-database.ts"
+  },
+  "dependencies": {
+    "pg": "8.13.1",
+    "effect": "*",
+    "@effect/platform": "*",
+    "@effect/platform-node": "*",
+    "@effect/sql": "*",
+    "@effect/sql-pg": "*",
+    "@effect/cli": "*"
+  },
+  "effect": {
+    "generateExports": {
+      "include": [
+        "**/*.ts"
+      ]
+    },
+    "generateIndex": {
+      "include": [
+        "**/*.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/pg": "^8.11.11",
+    "dotenv": "^16.4.7"
+  }
+}

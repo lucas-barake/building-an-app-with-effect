@@ -1,0 +1,75 @@
+{
+  "name": "@org/server",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The server template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucas-barake/rpc-tutorial.git",
+    "directory": "packages/server"
+  },
+  "main": "build/esm/server.js",
+  "module": "build/esm/server.js",
+  "types": "build/dts/server.d.ts",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "clean": "rm -rf build && rm -rf .tsbuildinfo",
+    "prebuild": "npm run clean",
+    "build": "tsc -b tsconfig.build.json",
+    "postbuild": "echo 'Build completed'",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "dev": "deno run --no-lock --allow-all --unstable-byonm --unstable-sloppy-imports --watch src/server.ts",
+    "start": "tsx build/esm/server.js",
+    "start:source": "pnpm start",
+    "circular": "madge --circular src/server.ts",
+    "lint": "eslint . --quiet",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/ai": "*",
+    "@effect/ai-anthropic": "*",
+    "@effect/ai-openai": "*",
+    "@effect/cluster": "*",
+    "@effect/experimental": "*",
+    "@effect/opentelemetry": "*",
+    "@effect/platform": "*",
+    "@effect/platform-node": "*",
+    "@effect/rpc": "*",
+    "@effect/sql": "*",
+    "@effect/sql-pg": "*",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57.1",
+    "@opentelemetry/resources": "*",
+    "@opentelemetry/sdk-trace-base": "*",
+    "@opentelemetry/sdk-trace-node": "*",
+    "@opentelemetry/semantic-conventions": "*",
+    "@org/database": "workspace:^",
+    "@org/domain": "workspace:^",
+    "@testcontainers/postgresql": "^10.28.0",
+    "effect": "*",
+    "pg": "8.13.1"
+  },
+  "effect": {
+    "generateExports": {
+      "include": [
+        "**/*.ts"
+      ]
+    },
+    "generateIndex": {
+      "include": [
+        "**/*.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.11",
+    "dotenv": "^16.4.7",
+    "madge": "8.0.0",
+    "tsx": "^4.19.2"
+  }
+}
