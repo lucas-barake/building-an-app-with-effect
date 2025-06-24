@@ -1,0 +1,59 @@
+name: Check
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, dev, staging]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - run: pnpm check
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - name: Check formatting
+        id: format
+        run: pnpm format:check
+        continue-on-error: true
+      - name: Lint code
+        id: lint
+        run: pnpm lint
+        continue-on-error: true
+      - name: Check if any step failed
+        if: steps.format.outcome == 'failure' || steps.lint.outcome == 'failure'
+        run: |
+          echo "::error::One or more code quality checks failed"
+          exit 1
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      - run: pnpm vitest
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
