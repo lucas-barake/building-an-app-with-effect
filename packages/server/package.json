@@ -23,7 +23,7 @@
     "postbuild": "echo 'Build completed'",
     "test": "vitest",
     "coverage": "vitest --coverage",
-    "dev": "deno run --no-lock --allow-all --unstable-byonm --unstable-sloppy-imports --watch src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "start": "tsx build/esm/server.js",
     "start:source": "pnpm start",
     "circular": "madge --circular src/server.ts",
