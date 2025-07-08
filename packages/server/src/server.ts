@@ -1,33 +1,20 @@
-import {
-  HttpApi,
-  HttpApiBuilder,
-  HttpApiEndpoint,
-  HttpApiGroup,
-  HttpServer,
-} from "@effect/platform";
+import { HttpLayerRouter, HttpServer, HttpServerResponse } from "@effect/platform";
 import { NodeHttpServer, NodeRuntime } from "@effect/platform-node";
-import { Effect, Layer, Schema } from "effect";
+import { DomainApi } from "@org/domain/domain-api";
+import { Layer } from "effect";
 import { createServer } from "node:http";
+import { StylesRpcLive } from "./domain/styles/styles-rpc-live.js";
 
-class HealthGroup extends HttpApiGroup.make("health")
-  .add(HttpApiEndpoint.get("get", "/").addSuccess(Schema.String))
-  .prefix("/health") {}
+const ApiLive = HttpLayerRouter.addHttpApi(DomainApi).pipe(Layer.provide(StylesRpcLive));
 
-const Api = HttpApi.make("Api").add(HealthGroup);
-
-const HealthGroupLive = HttpApiBuilder.group(Api, "health", (handlers) =>
-  Effect.gen(function* () {
-    yield* Effect.logDebug("HealthGroupLive");
-
-    return handlers.handle("get", () => Effect.succeed("OK"));
-  }),
+const HealthRouter = HttpLayerRouter.use((router) =>
+  router.add("GET", "/health", HttpServerResponse.text("OK")),
 );
 
-const ApiLive = HttpApiBuilder.api(Api).pipe(Layer.provide(HealthGroupLive));
+const AllRoutes = Layer.mergeAll(ApiLive, HealthRouter);
 
-const HttpLive = HttpApiBuilder.serve().pipe(
+const HttpLive = HttpLayerRouter.serve(AllRoutes).pipe(
   HttpServer.withLogAddress,
-  Layer.provide(ApiLive),
   Layer.provide(
     NodeHttpServer.layer(createServer, {
       port: 3000,
