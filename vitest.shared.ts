@@ -7,6 +7,7 @@ const alias = (name: string) => {
   return {
     [`${scopedName}/test`]: path.join(__dirname, "packages", name, "test"),
     [`${scopedName}`]: path.join(__dirname, "packages", name, target),
+    [`${scopedName}/*`]: path.join(__dirname, "packages", name, target),
   };
 };
 
@@ -29,9 +30,19 @@ const config: ViteUserConfig = {
     sequence: {
       concurrent: true,
     },
+    pool: "forks",
+    poolOptions: {
+      forks: {
+        maxForks: 2,
+        minForks: 1,
+        isolate: true,
+      },
+    },
+    slowTestThreshold: 5_000,
     include: ["test/**/*.test.ts", "src/**/*.test.ts"],
     alias: {
       ...alias("cli"),
+      ...alias("database"),
       ...alias("domain"),
       ...alias("server"),
     },

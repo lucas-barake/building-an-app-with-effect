@@ -331,9 +331,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.1)
-      dotenv-cli:
-        specifier: 8.0.0
-        version: 8.0.0
       eslint:
         specifier: ^9.19.0
         version: 9.19.0(jiti@2.4.2)
@@ -395,15 +392,9 @@ importers:
         specifier: 8.13.1
         version: 8.13.1
     devDependencies:
-      "@types/dotenv":
-        specifier: ^8.2.3
-        version: 8.2.3
       "@types/pg":
         specifier: ^8.11.11
         version: 8.11.11
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.4.7
     publishDirectory: dist
 
   packages/domain:
@@ -492,9 +483,6 @@ importers:
       "@types/pg":
         specifier: ^8.11.11
         version: 8.11.11
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.4.7
       madge:
         specifier: 8.0.0
         version: 8.0.0(typescript@5.8.2)
@@ -3831,13 +3819,6 @@ packages:
         integrity: sha512-uMPmxehH6ofeYjaslASPtjvyH8FRJdM9fZ+hjhGzL4Jq3bGjr9D7TKmp9soSwgFncNk0HOwmyBxjqOb3ikjjsA==,
       }
 
-  "@types/dotenv@8.2.3":
-    resolution:
-      {
-        integrity: sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw==,
-      }
-    deprecated: This is a stub types definition. dotenv provides its own type definitions, so you do not need this installed.
-
   "@types/eslint@8.56.12":
     resolution:
       {
@@ -5431,27 +5412,6 @@ packages:
       {
         integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==,
       }
-
-  dotenv-cli@8.0.0:
-    resolution:
-      {
-        integrity: sha512-aLqYbK7xKOiTMIRf1lDPbI+Y+Ip/wo5k3eyp6ePysVaSqbyxjyK3dK35BTxG+rmd7djf5q2UPs4noPNH+cj0Qw==,
-      }
-    hasBin: true
-
-  dotenv-expand@10.0.0:
-    resolution:
-      {
-        integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==,
-      }
-    engines: { node: ">=12" }
-
-  dotenv@16.4.7:
-    resolution:
-      {
-        integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==,
-      }
-    engines: { node: ">=12" }
 
   dunder-proto@1.0.1:
     resolution:
@@ -12125,10 +12085,6 @@ snapshots:
       "@types/node": 22.13.4
       "@types/ssh2": 1.15.5
 
-  "@types/dotenv@8.2.3":
-    dependencies:
-      dotenv: 16.4.7
-
   "@types/eslint@8.56.12":
     dependencies:
       "@types/estree": 1.0.6
@@ -13124,17 +13080,6 @@ snapshots:
   dom-accessibility-api@0.5.16: {}
 
   dom-accessibility-api@0.6.3: {}
-
-  dotenv-cli@8.0.0:
-    dependencies:
-      cross-spawn: 7.0.6
-      dotenv: 16.4.7
-      dotenv-expand: 10.0.0
-      minimist: 1.2.8
-
-  dotenv-expand@10.0.0: {}
-
-  dotenv@16.4.7: {}
 
   dunder-proto@1.0.1:
     dependencies:

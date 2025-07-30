@@ -23,8 +23,8 @@
     "postbuild": "echo 'Build completed'",
     "test": "vitest",
     "coverage": "vitest --coverage",
-    "dev": "tsx watch src/server.ts",
-    "start": "tsx build/esm/server.js",
+    "dev": "dotenv -e ../../.env tsx watch src/server.ts",
+    "start": "dotenv -e ../../.env tsx build/esm/server.js",
     "start:source": "pnpm start",
     "circular": "madge --circular src/server.ts",
     "lint": "eslint . --quiet",
@@ -68,7 +68,6 @@
   },
   "devDependencies": {
     "@types/pg": "^8.11.11",
-    "dotenv": "^16.4.7",
     "madge": "8.0.0",
     "tsx": "^4.19.2"
   }
