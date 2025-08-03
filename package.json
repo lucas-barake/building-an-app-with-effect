@@ -82,7 +82,8 @@
     "@effect/ai-openai": "0.28.0",
     "@effect/ai-anthropic": "0.15.0",
     "@effect-rx/rx-react": "0.40.5",
-    "@effect/cli": "0.69.0"
+    "@effect/cli": "0.69.0",
+    "dotenv-cli": "^10.0.0"
   },
   "pnpm": {
     "overrides": {

@@ -1,3 +1,4 @@
+import { RegistryProvider } from "@effect-rx/rx-react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -16,8 +17,10 @@ declare module "@tanstack/react-router" {
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <RegistryProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </RegistryProvider>
   </React.StrictMode>,
 );

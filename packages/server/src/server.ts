@@ -1,4 +1,4 @@
-import { HttpLayerRouter, HttpServer, HttpServerResponse } from "@effect/platform";
+import { HttpLayerRouter, HttpServerResponse } from "@effect/platform";
 import { NodeHttpServer, NodeRuntime } from "@effect/platform-node";
 import { DomainApi } from "@org/domain/domain-api";
 import { Layer } from "effect";
@@ -11,10 +11,18 @@ const HealthRouter = HttpLayerRouter.use((router) =>
   router.add("GET", "/health", HttpServerResponse.text("OK")),
 );
 
-const AllRoutes = Layer.mergeAll(ApiLive, HealthRouter);
+const AllRoutes = Layer.mergeAll(ApiLive, HealthRouter).pipe(
+  Layer.provide(
+    HttpLayerRouter.cors({
+      allowedOrigins: ["*"],
+      allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      allowedHeaders: ["Content-Type", "Authorization", "B3", "traceparent"],
+      credentials: true,
+    }),
+  ),
+);
 
 const HttpLive = HttpLayerRouter.serve(AllRoutes).pipe(
-  HttpServer.withLogAddress,
   Layer.provide(
     NodeHttpServer.layer(createServer, {
       port: 3000,
