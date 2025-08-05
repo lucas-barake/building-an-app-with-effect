@@ -48,7 +48,7 @@ type FieldInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "id"> &
   controlClassName?: string;
   description?: string;
 };
-const FieldInput: React.FC<FieldInputProps> = ({
+export const FieldInput: React.FC<FieldInputProps> = ({
   className,
   controlClassName,
   description,
@@ -77,7 +77,7 @@ type FieldTextareaProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>
   controlClassName?: string;
   ref?: React.Ref<HTMLTextAreaElement>;
 };
-const FieldTextarea: React.FC<FieldTextareaProps> = ({
+export const FieldTextarea: React.FC<FieldTextareaProps> = ({
   className,
   controlClassName,
   error,

@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Server",
+      "type": "shell",
+      "command": "nix develop -c $SHELL -c 'pnpm --filter server dev'",
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "new",
+        "reveal": "always",
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/packages/server"
+      },
+      "icon": {
+        "id": "server-process",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Client",
+      "type": "shell",
+      "command": "nix develop -c $SHELL -c 'pnpm --filter client dev'",
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "new",
+        "reveal": "always",
+        "echo": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/packages/client"
+      },
+      "icon": {
+        "id": "browser",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "Start Workspace",
+      "dependsOn": ["Server", "Client"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
