@@ -1,18 +1,18 @@
 import { Button, Separator } from "@/components/ui";
 import { FieldInput, FieldTextarea } from "@/components/ui/form";
-import { deleteStyleRx, stylesRx, upsertStyleRx } from "@/data-access/styles-rx";
+import { deleteStyleAtom, stylesAtom, upsertStyleAtom } from "@/features/root/styles-atoms";
 import { makeFormOptions } from "@/lib/forms/make-form-options";
-import { useRxPromise, useRxSetPromiseUnwrapped } from "@/rx/rx-utils";
-import { Result, useRxValue } from "@effect-rx/rx-react";
+import { Result, useAtom, useAtomRefresh, useAtomSet, useAtomValue } from "@effect-atom/atom-react";
 import { UpsertStylePayload, type Style } from "@org/domain/styles-rpc";
 import { useForm } from "@tanstack/react-form";
 import { Schema } from "effect";
-import { constant } from "effect/Function";
 import { TrashIcon } from "lucide-react";
 import React from "react";
 
 const UpsertStyle: React.FC = () => {
-  const upsert = useRxSetPromiseUnwrapped(upsertStyleRx);
+  const upsert = useAtomSet(upsertStyleAtom, {
+    mode: "promise",
+  });
 
   const form = useForm({
     ...makeFormOptions({
@@ -80,7 +80,7 @@ const UpsertStyle: React.FC = () => {
 };
 
 const StyleItem: React.FC<{ style: Style }> = ({ style }) => {
-  const [delState, del] = useRxPromise(deleteStyleRx);
+  const [delState, del] = useAtom(deleteStyleAtom, { mode: "promiseExit" });
 
   const handleDelete = () => del(style.id);
 
@@ -118,12 +118,22 @@ const SuccessView: React.FC<{ styles: ReadonlyArray<Style> }> = ({ styles }) => 
   );
 };
 
+const Retry: React.FC = () => {
+  const refresh = useAtomRefresh(stylesAtom.remote);
+  return (
+    <div className="flex flex-col gap-2">
+      <p>Something went wrong...</p>
+      <Button onClick={refresh}>Retry</Button>
+    </div>
+  );
+};
+
 export const RootPage: React.FC = () => {
-  const stylesResult = useRxValue(stylesRx);
+  const stylesResult = useAtomValue(stylesAtom);
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       {Result.builder(stylesResult)
-        .onFailure(constant("Something went wrong..."))
+        .onFailure(() => <Retry />)
         .onSuccess((styles) => <SuccessView styles={styles} />)
         .onWaiting((result) => Result.isInitial(result) && result.waiting && <p>Loading...</p>)
         .orNull()}

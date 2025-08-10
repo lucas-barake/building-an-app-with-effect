@@ -1,9 +1,10 @@
-import { RegistryProvider } from "@effect-rx/rx-react";
+import { RegistryProvider } from "@effect-atom/atom-react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "./components/providers/theme-provider.tsx";
 import "./index.css";
+import { KaServices } from "./ka-services.tsx";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
@@ -20,6 +21,7 @@ createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RegistryProvider>
       <ThemeProvider>
+        <KaServices />
         <RouterProvider router={router} />
       </ThemeProvider>
     </RegistryProvider>

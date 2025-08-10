@@ -32,7 +32,7 @@ packages=(
     "@effect/ai-openai"
     "@effect/ai-anthropic"
     "@effect/ai-google"
-    "@effect-rx/rx-react"
+    "@effect-atom/atom-react"
     "@effect/cli"
     "@effect/printer"
     "@effect/printer-ansi"
