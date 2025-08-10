@@ -4,7 +4,7 @@ import { deleteStyleRx, stylesRx, upsertStyleRx } from "@/data-access/styles-rx"
 import { makeFormOptions } from "@/lib/forms/make-form-options";
 import { useRxPromise, useRxSetPromiseUnwrapped } from "@/rx/rx-utils";
 import { Result, useRxValue } from "@effect-rx/rx-react";
-import { UpsertStylePayload, type Style } from "@org/domain/api/styles-rpc";
+import { UpsertStylePayload, type Style } from "@org/domain/styles-rpc";
 import { useForm } from "@tanstack/react-form";
 import { Schema } from "effect";
 import { constant } from "effect/Function";

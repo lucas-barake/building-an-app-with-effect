@@ -1,6 +1,6 @@
 import { SqlClient, SqlSchema } from "@effect/sql";
 import { PgLive } from "@org/database/database";
-import { Style, StyleId, StyleNotFoundError } from "@org/domain/api/styles-rpc";
+import { Style, StyleId, StyleNotFoundError } from "@org/domain/styles-rpc";
 import { Effect, flow, Schema } from "effect";
 
 const CreateStyleInput = Style.pipe(Schema.pick("name", "rule"));

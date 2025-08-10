@@ -2,7 +2,7 @@ import { describe, it } from "@effect/vitest";
 import { deepStrictEqual } from "assert";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import * as Control from "../src/control.js";
+import * as Control from "./control.js";
 
 describe("whenOrFail", () => {
   it.effect("executes the effect when condition is true", () =>

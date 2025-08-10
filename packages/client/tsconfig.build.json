@@ -1,8 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
     "sourceMap": true
   },
   "references": [{ "path": "./tsconfig.app.json" }]

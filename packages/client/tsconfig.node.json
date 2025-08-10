@@ -5,6 +5,9 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

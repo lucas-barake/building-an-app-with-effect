@@ -33,8 +33,6 @@ const config: ViteUserConfig = {
     pool: "forks",
     poolOptions: {
       forks: {
-        maxForks: 2,
-        minForks: 1,
         isolate: true,
       },
     },

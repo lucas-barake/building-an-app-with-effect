@@ -1,5 +1,5 @@
 import { Registry } from "@effect-rx/rx-react";
-import { type StyleId, type UpsertStylePayload } from "@org/domain/api/styles-rpc";
+import { type StyleId, type UpsertStylePayload } from "@org/domain/styles-rpc";
 import { Effect } from "effect";
 import { rxRuntime } from "../rx/runtime";
 import { ApiClient } from "../services/common/api-client";

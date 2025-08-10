@@ -4,7 +4,7 @@ import * as Fiber from "effect/Fiber";
 import * as Ref from "effect/Ref";
 import * as TestClock from "effect/TestClock";
 import { strictEqual } from "node:assert";
-import * as Cache from "../src/manual-cache.js";
+import * as Cache from "./manual-cache.js";
 
 describe("Cache", () => {
   it.scoped("should handle basic set and get operations", () =>
