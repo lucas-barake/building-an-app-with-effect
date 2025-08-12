@@ -1,4 +1,5 @@
 import { makeAtomRuntime } from "@/atom/make-atom-runtime";
+import { withToast } from "@/atom/with-toast";
 import { ApiClient } from "@/services/common/api-client";
 import { Atom, Registry, Result } from "@effect-atom/atom-react";
 import { type Style, type StyleId, type UpsertStylePayload } from "@org/domain/styles-rpc";
@@ -44,21 +45,35 @@ export const stylesAtom = Object.assign(
 );
 
 export const upsertStyleAtom = runtime.fn(
-  Effect.fnUntraced(function* (payload: UpsertStylePayload) {
-    const registry = yield* Registry.AtomRegistry;
-    const api = yield* ApiClient;
+  Effect.fn(
+    function* (payload: UpsertStylePayload) {
+      const registry = yield* Registry.AtomRegistry;
+      const api = yield* ApiClient;
 
-    const style = yield* api.http.styles.upsert({ payload });
-    registry.set(stylesAtom, Action.Upsert({ style }));
-  }),
+      const style = yield* api.http.styles.upsert({ payload });
+      registry.set(stylesAtom, Action.Upsert({ style }));
+    },
+    withToast({
+      onWaiting: (payload) => `${payload.id !== undefined ? "Updating" : "Creating"} style...`,
+      onSuccess: "Style saved",
+      onFailure: "Failed to save style",
+    }),
+  ),
 );
 
 export const deleteStyleAtom = runtime.fn(
-  Effect.fn(function* (id: StyleId) {
-    const registry = yield* Registry.AtomRegistry;
-    const api = yield* ApiClient;
+  Effect.fn(
+    function* (id: StyleId) {
+      const registry = yield* Registry.AtomRegistry;
+      const api = yield* ApiClient;
 
-    yield* api.http.styles.delete({ payload: { id } });
-    registry.set(stylesAtom, Action.Del({ id }));
-  }),
+      yield* api.http.styles.delete({ payload: { id } });
+      registry.set(stylesAtom, Action.Del({ id }));
+    },
+    withToast({
+      onWaiting: "Deleting style...",
+      onSuccess: "Style deleted",
+      onFailure: "Failed to delete style",
+    }),
+  ),
 );
