@@ -1,13 +1,15 @@
-import { Cause, Effect, type Option } from "effect";
+import * as Cause from "effect/Cause";
+import * as Effect from "effect/Effect";
+import type * as Option from "effect/Option";
 import { toast } from "sonner";
 
-type ToastOptions<A, E, Args extends ReadonlyArray<any>> = {
+type ToastOptions<A, E, Args extends ReadonlyArray<unknown>> = {
   onWaiting: string | ((...args: Args) => string);
   onSuccess: string | ((a: A, ...args: Args) => string);
   onFailure: string | ((error: Option.Option<E>, ...args: Args) => string);
 };
 
-export const withToast = <A, E, Args extends ReadonlyArray<any>, R>(
+export const withToast = <A, E, Args extends ReadonlyArray<unknown>, R>(
   options: ToastOptions<A, E, Args>,
 ) =>
   Effect.fnUntraced(function* (self: Effect.Effect<A, E, R>, ...args: Args) {

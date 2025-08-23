@@ -1,12 +1,3 @@
-/* eslint-disable */
-/**
- * Enforces consistent React imports by requiring namespace pattern.
- * Prevents mixing named imports with namespace imports to avoid confusion
- * and maintain consistent React API access patterns.
- */
-
-"use strict";
-
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -165,7 +156,7 @@ export default {
       },
 
       // Clean up state between files
-      "Program:exit"(node) {
+      "Program:exit"(_node) {
         reactNamespace = "React";
         namedImportsFromReact.clear();
       },

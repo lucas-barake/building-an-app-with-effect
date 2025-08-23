@@ -1,5 +1,11 @@
-import { PgClient } from "@effect/sql-pg";
-import { Config, Duration, Effect, identity, Layer, Schedule, String } from "effect";
+import * as PgClient from "@effect/sql-pg/PgClient";
+import * as Config from "effect/Config";
+import * as Duration from "effect/Duration";
+import * as Effect from "effect/Effect";
+import { identity } from "effect/Function";
+import * as Layer from "effect/Layer";
+import * as Schedule from "effect/Schedule";
+import * as String from "effect/String";
 
 export const pgConfig = {
   transformQueryNames: String.camelToSnake,

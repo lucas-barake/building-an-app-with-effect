@@ -135,7 +135,7 @@ const FieldSelect: React.FC<FieldSelectProps> = ({
   const finalOptions: Array<FieldSelectOption> = [];
 
   finalOptions.push({ label: placeholder, value: "" });
-  // eslint-disable-next-line no-restricted-syntax
+
   finalOptions.push(...userOptions);
 
   const hasUserOptions = userOptions.length > 0;

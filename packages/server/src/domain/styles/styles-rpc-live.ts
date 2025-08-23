@@ -1,7 +1,8 @@
-import { HttpApiBuilder } from "@effect/platform";
+import * as HttpApiBuilder from "@effect/platform/HttpApiBuilder";
 import { DomainApi } from "@org/domain/domain-api";
-import { Effect, Layer } from "effect";
-import { StylesRepo } from "./internal/styles-repo.js";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import { StylesRepo } from "./services/styles-repo.js";
 
 export const StylesRpcLive = HttpApiBuilder.group(DomainApi, "styles", (handlers) =>
   Effect.gen(function* () {

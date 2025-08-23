@@ -1,8 +1,9 @@
-import { NodeContext, NodeRuntime } from "@effect/platform-node";
-import { PgMigrator } from "@effect/sql-pg";
-import { Effect } from "effect";
-import * as path from "path";
-import { fileURLToPath } from "url";
+import * as NodeContext from "@effect/platform-node/NodeContext";
+import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
+import * as PgMigrator from "@effect/sql-pg/PgMigrator";
+import * as Effect from "effect/Effect";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import { PgLive } from "../database.js";
 
 NodeRuntime.runMain(

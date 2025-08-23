@@ -1,12 +1,14 @@
-import { FileSystem } from "@effect/platform";
-import { NodeContext } from "@effect/platform-node";
-import { SqlClient } from "@effect/sql";
-import { PgClient } from "@effect/sql-pg";
+import * as NodeContext from "@effect/platform-node/NodeContext";
+import * as FileSystem from "@effect/platform/FileSystem";
+import * as PgClient from "@effect/sql-pg/PgClient";
+import * as SqlClient from "@effect/sql/SqlClient";
 import { pgConfig } from "@org/database/database";
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
-import { Effect, Layer, Redacted } from "effect";
-import * as path from "path";
-import { fileURLToPath } from "url";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 
 export class PgContainer extends Effect.Service<PgContainer>()("PgContainer", {
   scoped: Effect.acquireRelease(

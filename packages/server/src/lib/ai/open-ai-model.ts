@@ -1,7 +1,14 @@
-import { HttpBody, HttpClientResponse } from "@effect/platform";
-import { Effect, JSONSchema, Schema, Stream } from "effect";
-import { AiError, AiModel } from "./ai-model.js";
-import { OpenAiProvider } from "./open-ai-provider.js";
+import * as HttpBody from "@effect/platform/HttpBody";
+import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
+import * as Arr from "effect/Array";
+import * as Effect from "effect/Effect";
+import * as JSONSchema from "effect/JSONSchema";
+import * as Layer from "effect/Layer";
+import * as Option from "effect/Option";
+import * as Schema from "effect/Schema";
+import * as Stream from "effect/Stream";
+import * as AiModel from "./ai-model.js";
+import { OpenAiClient } from "./open-ai-client.js";
 
 // ================================
 // Json Schema
@@ -18,41 +25,46 @@ const makeJsonSchema = <A, I, R>(schema: Schema.Schema<A, I, R>): JSONSchema.Jso
 // Schemas
 // ================================
 
-class Completion extends Schema.Class<Completion>("Completion")({
-  object: Schema.Literal("response"),
-  output: Schema.Array(
-    Schema.Struct({
-      type: Schema.Literal("message"),
-      content: Schema.Array(
+const OutputItem = Schema.Union(
+  Schema.Struct({
+    id: Schema.optional(Schema.String),
+    type: Schema.Literal("message"),
+    role: Schema.optional(Schema.Literal("assistant")),
+    content: Schema.Array(
+      Schema.Struct({
+        type: Schema.Literal("output_text"),
+        text: Schema.String,
+      }),
+    ),
+  }),
+  Schema.Struct({
+    id: Schema.optional(Schema.String),
+    type: Schema.Literal("reasoning"),
+    status: Schema.optional(Schema.Literal("completed", "in_progress")),
+    summary: Schema.optional(
+      Schema.Array(
         Schema.Struct({
-          type: Schema.Literal("output_text"),
+          type: Schema.Literal("reasoning_text"),
           text: Schema.String,
         }),
       ),
-    }),
-  ),
+    ),
+  }),
+);
+
+class Completion extends Schema.Class<Completion>("Completion")({
+  object: Schema.Literal("response"),
+  output: Schema.Array(OutputItem),
 }) {}
 
-class ResponseEvent extends Schema.Class<ResponseEvent>("ResponseEvent")({
+class StreamEvent extends Schema.Class<StreamEvent>("StreamEvent")({
   type: Schema.String,
   delta: Schema.optional(Schema.String),
   response: Schema.optional(
     Schema.Struct({
       object: Schema.Literal("response"),
       status: Schema.Literal("in_progress", "completed", "failed", "incomplete"),
-      output: Schema.optional(
-        Schema.Array(
-          Schema.Struct({
-            type: Schema.Literal("message"),
-            content: Schema.Array(
-              Schema.Struct({
-                type: Schema.Literal("output_text"),
-                text: Schema.String,
-              }),
-            ),
-          }),
-        ),
-      ),
+      output: Schema.optional(Schema.Array(OutputItem)),
     }),
   ),
 }) {}
@@ -64,9 +76,16 @@ class ResponseEvent extends Schema.Class<ResponseEvent>("ResponseEvent")({
 export type Model = "gpt-5" | "gpt-4o" | "gpt-4o-mini";
 
 export const make = Effect.fnUntraced(function* (makeOptions: { readonly model: Model }) {
-  const config = yield* OpenAiProvider;
+  const config = yield* OpenAiClient;
 
-  return AiModel.of({
+  const completionToMessage = (completion: Completion): string =>
+    Arr.findFirst(completion.output, (item) => item.type === "message").pipe(
+      Option.flatMap((item) => Arr.head(item.content)),
+      Option.map((item) => item.text),
+      Option.getOrElse(() => ""),
+    );
+
+  return AiModel.AiModel.of({
     generateText: Effect.fn("OpenAiModel.generateText")((options) =>
       config.httpClient
         .post("/v1/responses", {
@@ -80,10 +99,10 @@ export const make = Effect.fnUntraced(function* (makeOptions: { readonly model: 
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.schemaBodyJson(Completion)),
-          Effect.map((response) => response.output[0]?.content[0]?.text ?? ""),
+          Effect.map(completionToMessage),
           Effect.mapError(
             (error) =>
-              new AiError({
+              new AiModel.AiError({
                 description: error.message,
                 method: "generateText",
                 module: "OpenAiModel",
@@ -113,11 +132,11 @@ export const make = Effect.fnUntraced(function* (makeOptions: { readonly model: 
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.schemaBodyJson(Completion)),
-          Effect.map((response) => response.output[0]?.content[0]?.text ?? ""),
+          Effect.map(completionToMessage),
           Effect.flatMap(Schema.decode(Schema.parseJson(options.schema))),
           Effect.mapError(
             (error) =>
-              new AiError({
+              new AiModel.AiError({
                 description: error.message,
                 method: "generateObject",
                 module: "OpenAiModel",
@@ -155,12 +174,12 @@ export const make = Effect.fnUntraced(function* (makeOptions: { readonly model: 
           Stream.filter((line) => line.startsWith("data:")),
           Stream.filter((line) => line !== "data: [DONE]"),
           Stream.map((line) => line.slice(5)),
-          Stream.mapEffect(Schema.decode(Schema.parseJson(ResponseEvent))),
+          Stream.mapEffect(Schema.decode(Schema.parseJson(StreamEvent))),
           Stream.filter((event) => event.type === "response.output_text.delta"),
           Stream.map((event) => event.delta ?? ""),
           Stream.mapError(
             (error) =>
-              new AiError({
+              new AiModel.AiError({
                 description: error.message,
                 method: "streamText",
                 module: "OpenAiModel",
@@ -172,4 +191,4 @@ export const make = Effect.fnUntraced(function* (makeOptions: { readonly model: 
   });
 });
 
-export const model = (model: Model) => make({ model });
+export const model = (model: Model) => Layer.effect(AiModel.AiModel, make({ model }));

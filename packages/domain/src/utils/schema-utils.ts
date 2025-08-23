@@ -133,6 +133,7 @@ export const FormFieldSchema = Schema.Struct({
 
   // Conditional
   if: Schema.optional(Schema.Object),
+  // biome-ignore lint/suspicious/noThenProperty: necessary
   then: Schema.optional(Schema.Object),
   else: Schema.optional(Schema.Object),
 

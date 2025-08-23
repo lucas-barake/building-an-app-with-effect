@@ -1,16 +1,21 @@
-import { HttpClient, HttpClientRequest } from "@effect/platform";
-import { Context, Effect, Layer, Schedule, type Redacted } from "effect";
+import * as HttpClient from "@effect/platform/HttpClient";
+import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
+import * as Context from "effect/Context";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
+import * as Schedule from "effect/Schedule";
 
-export declare namespace OpenAiProvider {
+export declare namespace OpenAiClient {
   export type Service = {
     readonly httpClient: HttpClient.HttpClient;
     readonly apiKey: Redacted.Redacted;
   };
 }
 
-export class OpenAiProvider extends Context.Tag("OpenAiProvider")<
-  OpenAiProvider,
-  OpenAiProvider.Service
+export class OpenAiClient extends Context.Tag("OpenAiClient")<
+  OpenAiClient,
+  OpenAiClient.Service
 >() {}
 
 export const make = Effect.fnUntraced(function* (makeOptions: {
@@ -30,11 +35,11 @@ export const make = Effect.fnUntraced(function* (makeOptions: {
     ),
   );
 
-  return OpenAiProvider.of({
+  return OpenAiClient.of({
     httpClient,
     apiKey: makeOptions.apiKey,
   });
 });
 
 export const layer = (makeOptions: { readonly apiKey: Redacted.Redacted }) =>
-  Layer.scoped(OpenAiProvider, make(makeOptions));
+  Layer.scoped(OpenAiClient, make(makeOptions));

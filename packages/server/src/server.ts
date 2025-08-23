@@ -1,7 +1,9 @@
-import { HttpLayerRouter, HttpServerResponse } from "@effect/platform";
-import { NodeHttpServer, NodeRuntime } from "@effect/platform-node";
+import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer";
+import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
+import * as HttpLayerRouter from "@effect/platform/HttpLayerRouter";
+import * as HttpServerResponse from "@effect/platform/HttpServerResponse";
 import { DomainApi } from "@org/domain/domain-api";
-import { Layer } from "effect";
+import * as Layer from "effect/Layer";
 import { createServer } from "node:http";
 import { StylesRpcLive } from "./domain/styles/styles-rpc-live.js";
 

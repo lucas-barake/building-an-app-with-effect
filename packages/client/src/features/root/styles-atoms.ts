@@ -3,7 +3,9 @@ import { withToast } from "@/atom/with-toast";
 import { ApiClient } from "@/services/common/api-client";
 import { Atom, Registry, Result } from "@effect-atom/atom-react";
 import { type Style, type StyleId, type UpsertStylePayload } from "@org/domain/styles-rpc";
-import { Array, Data, Effect } from "effect";
+import * as Arr from "effect/Array";
+import * as Data from "effect/Data";
+import * as Effect from "effect/Effect";
 
 const runtime = makeAtomRuntime(ApiClient.Default);
 
@@ -32,7 +34,7 @@ export const stylesAtom = Object.assign(
         Upsert: ({ style }) => {
           const existing = result.value.find((s) => s.id === style.id);
           if (existing) return result.value.map((s) => (s.id === style.id ? style : s));
-          return Array.prepend(result.value, style);
+          return Arr.prepend(result.value, style);
         },
       });
 

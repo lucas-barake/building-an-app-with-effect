@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * @fileoverview prevent relative imports above the nearest package.json
  */
@@ -21,7 +20,7 @@ export default {
     schema: [],
   },
 
-  create: function (context) {
+  create: (context) => {
     const packagePaths = {};
 
     //----------------------------------------------------------------------
@@ -46,6 +45,14 @@ export default {
     // Public
     //----------------------------------------------------------------------
 
+    const assertNoSrcInAbsoluteImport = (importPath) => {
+      // Check if it's an @org scoped import that includes /src
+      if (scopedRegExp.test(importPath) && importPath.includes("/src")) {
+        return true;
+      }
+      return false;
+    };
+
     const assertNoRelativeImportPath = (importPath) => {
       if (isExternal(importPath)) {
         // skip external imports b/c they're not reaching into other monorepo packages
@@ -69,6 +76,7 @@ export default {
       const fileBasePath = path.dirname(fileName);
 
       if (!packagePaths[fileBasePath]) {
+        // biome-ignore lint/suspicious/noAssignInExpressions: easy of use
         const packageInfo = (packagePaths[fileBasePath] = {});
 
         // should only call this if the current filename path doesn't include a previously found package
@@ -90,12 +98,25 @@ export default {
     };
 
     return {
-      ImportDeclaration: function (node) {
+      ImportDeclaration: (node) => {
         if (node.importKind === "type") {
           return;
         }
 
         const importPath = node.source.value;
+
+        if (assertNoSrcInAbsoluteImport(importPath)) {
+          context.report({
+            node,
+            message: `Import "${importPath}" should not include "/src" in the path.`,
+            fix(fixer) {
+              const fixedPath = importPath.replace(/\/src(?=\/|$)/, "");
+              return fixer.replaceText(node.source, `'${fixedPath}'`);
+            },
+          });
+          return;
+        }
+
         const failPackage = assertNoRelativeImportPath(importPath);
         if (failPackage) {
           context.report({
@@ -127,10 +148,23 @@ export default {
         }
       },
 
-      CallExpression: function (node) {
+      CallExpression: (node) => {
         if (node.callee.name === "require") {
           const [requirePath] = node.arguments;
           if (!requirePath) return;
+
+          if (assertNoSrcInAbsoluteImport(requirePath.value)) {
+            context.report({
+              node,
+              message: `Require "${requirePath.value}" should not include "/src" in the path.`,
+              fix(fixer) {
+                const fixedPath = requirePath.value.replace(/\/src(?=\/|$)/, "");
+                return fixer.replaceText(requirePath, `'${fixedPath}'`);
+              },
+            });
+            return;
+          }
+
           const failPackage = assertNoRelativeImportPath(requirePath.value);
           if (failPackage) {
             context.report({

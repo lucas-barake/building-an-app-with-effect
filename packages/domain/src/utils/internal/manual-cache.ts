@@ -1,5 +1,3 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import type * as Clock from "effect/Clock";
 import * as Data from "effect/Data";
 import * as Duration from "effect/Duration";

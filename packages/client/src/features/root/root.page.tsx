@@ -5,7 +5,7 @@ import { makeFormOptions } from "@/lib/forms/make-form-options";
 import { Result, useAtom, useAtomRefresh, useAtomSet, useAtomValue } from "@effect-atom/atom-react";
 import { UpsertStylePayload, type Style } from "@org/domain/styles-rpc";
 import { useForm } from "@tanstack/react-form";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 import { TrashIcon } from "lucide-react";
 import React from "react";
 

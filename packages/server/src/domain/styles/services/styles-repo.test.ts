@@ -1,6 +1,7 @@
 import { PgContainer } from "@/lib/test-utils/pg-container.js";
 import { expect, it } from "@effect/vitest";
-import { Effect, Layer } from "effect";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
 import { StylesRepo } from "./styles-repo.js";
 
 const layer = StylesRepo.DefaultWithoutDependencies.pipe(Layer.provide(PgContainer.Live));

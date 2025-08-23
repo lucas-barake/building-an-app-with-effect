@@ -22,14 +22,12 @@
             nodePackages.pnpm
             postgresql
             git
-            deno
           ];
           
           shellHook = ''
             echo "Node.js: $(node --version)"
             echo "pnpm: $(pnpm --version)"
             echo "Bun: $(bun --version)"
-            echo "Deno: $(deno --version | head -n1)"
             echo "$(psql --version)"
             echo "Git: $(git --version)"
             echo ""

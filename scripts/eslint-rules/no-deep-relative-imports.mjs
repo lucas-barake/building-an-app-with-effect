@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * @fileoverview prevent relative imports going up more than one level (../../) in client and server packages
  */
@@ -24,7 +23,7 @@ export default {
     schema: [],
   },
 
-  create: function (context) {
+  create: (context) => {
     //----------------------------------------------------------------------
     // Helpers
     //----------------------------------------------------------------------
@@ -148,14 +147,14 @@ export default {
     };
 
     return {
-      ImportDeclaration: function (node) {
+      ImportDeclaration: (node) => {
         if (node.importKind === "type") {
           return; // skip type imports
         }
         assertNoDeepRelativeImport(node, node.source.value);
       },
 
-      CallExpression: function (node) {
+      CallExpression: (node) => {
         // Check for require() calls
         if (
           node.callee.type === "Identifier" &&

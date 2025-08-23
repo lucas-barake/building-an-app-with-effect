@@ -1,6 +1,8 @@
-/* eslint-disable no-console */
-import { SqlClient, SqlSchema } from "@effect/sql";
-import { Effect, Schema } from "effect";
+/** biome-ignore-all lint/suspicious/noConsole: local script */
+import * as SqlClient from "@effect/sql/SqlClient";
+import * as SqlSchema from "@effect/sql/SqlSchema";
+import * as Effect from "effect/Effect";
+import * as Schema from "effect/Schema";
 import { PgLive } from "../database.js";
 
 void Effect.gen(function* () {

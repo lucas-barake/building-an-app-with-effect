@@ -35,7 +35,17 @@
     "module": "NodeNext",
     "incremental": true,
     "removeComments": false,
-    "plugins": [{ "name": "@effect/language-service" }],
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "quickinfoEffectParameters": "always",
+        "namespaceImportPackages": ["effect", "@effect/*"],
+        "topLevelNamedReexports": "follow",
+        "diagnosticSeverity": {
+          "importFromBarrel": "error"
+        }
+      }
+    ],
     "paths": {
       "@org/domain": ["./packages/domain/src/index.js"],
       "@org/domain/*": ["./packages/domain/src/*.js"],

@@ -1,6 +1,5 @@
-/* eslint-disable no-restricted-syntax */
-import { SqlClient } from "@effect/sql";
-import { Effect } from "effect";
+import * as SqlClient from "@effect/sql/SqlClient";
+import * as Effect from "effect/Effect";
 
 export default Effect.flatMap(
   SqlClient.SqlClient,

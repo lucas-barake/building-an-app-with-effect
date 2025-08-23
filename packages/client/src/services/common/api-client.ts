@@ -1,7 +1,12 @@
 import { envVars } from "@/lib/env-vars";
-import { FetchHttpClient, HttpApiClient, HttpClient } from "@effect/platform";
+import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
+import * as HttpApiClient from "@effect/platform/HttpApiClient";
+import * as HttpClient from "@effect/platform/HttpClient";
 import { DomainApi } from "@org/domain/domain-api";
-import { Duration, Effect, Random, Schedule } from "effect";
+import * as Duration from "effect/Duration";
+import * as Effect from "effect/Effect";
+import * as Random from "effect/Random";
+import * as Schedule from "effect/Schedule";
 
 export class ApiClient extends Effect.Service<ApiClient>()("@org/ApiClient", {
   dependencies: [FetchHttpClient.layer],
