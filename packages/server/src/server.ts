@@ -5,14 +5,25 @@ import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
 import * as HttpLayerRouter from "@effect/platform/HttpLayerRouter";
 import * as HttpMiddleware from "@effect/platform/HttpMiddleware";
 import * as HttpServerResponse from "@effect/platform/HttpServerResponse";
+import * as RpcSerialization from "@effect/rpc/RpcSerialization";
+import * as RpcServer from "@effect/rpc/RpcServer";
+import { RpcDef } from "@org/domain/rpc-def";
 import * as Layer from "effect/Layer";
 import { createServer } from "node:http";
+import { RpcDefLive } from "./rpc-def-live.js";
 
 const HealthRouter = HttpLayerRouter.use((router) =>
   router.add("GET", "/health", HttpServerResponse.text("OK")),
 );
 
-const AllRoutes = HealthRouter.pipe(
+const RpcRouter = RpcServer.layerHttpRouter({
+  group: RpcDef,
+  path: "/rpc",
+  protocol: "http",
+  spanPrefix: "rpc",
+}).pipe(Layer.provide(RpcDefLive), Layer.provide(RpcSerialization.layerNdjson));
+
+const AllRoutes = Layer.mergeAll(HealthRouter, RpcRouter).pipe(
   Layer.provide(
     HttpLayerRouter.cors({
       allowedOrigins: ["*"],
