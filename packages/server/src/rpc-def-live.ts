@@ -27,6 +27,7 @@ export const RpcDefLive = RpcDef.toLayer(
         yield* Effect.forkScoped(
           Effect.gen(function* () {
             yield* mailbox.offer({ _tag: "SearchingWeb" });
+            yield* Effect.sleep("2 hours");
             const searchResults = yield* webSearcher.search(payload.query);
             if (Array.isEmptyReadonlyArray(searchResults)) return yield* new NoSearchResultsFound();
 
