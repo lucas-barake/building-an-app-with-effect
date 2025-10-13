@@ -1,4 +1,4 @@
-import * as AiLanguageModel from "@effect/ai/AiLanguageModel";
+import * as AiLanguageModel from "@effect/ai/LanguageModel";
 import * as Effect from "effect/Effect";
 import * as Schema from "effect/Schema";
 import { AiExecPlan, AiLive } from "./ai-live.js";

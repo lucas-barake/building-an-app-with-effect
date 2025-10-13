@@ -1,4 +1,4 @@
-import * as AiLanguageModel from "@effect/ai/AiLanguageModel";
+import * as AiLanguageModel from "@effect/ai/LanguageModel";
 import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
 import { AiExecPlan, AiLive } from "./ai-live.js";
@@ -12,11 +12,7 @@ export class Summarizer extends Effect.Service<Summarizer>()("@org/Summarizer", 
       summarize: (query: string, markdownContents: ReadonlyArray<string>) =>
         AiLanguageModel.streamText({
           prompt: makePrompt(query, markdownContents),
-        }).pipe(
-          Stream.withExecutionPlan(execPlan),
-          Stream.map((response) => response.text),
-          Stream.orDie,
-        ),
+        }).pipe(Stream.withExecutionPlan(execPlan), Stream.orDie),
     } as const;
   }),
 }) {}

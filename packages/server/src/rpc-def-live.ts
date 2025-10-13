@@ -27,7 +27,6 @@ export const RpcDefLive = RpcDef.toLayer(
         yield* Effect.forkScoped(
           Effect.gen(function* () {
             yield* mailbox.offer({ _tag: "SearchingWeb" });
-            yield* Effect.sleep("2 hours");
             const searchResults = yield* webSearcher.search(payload.query);
             if (Array.isEmptyReadonlyArray(searchResults)) return yield* new NoSearchResultsFound();
 
@@ -44,7 +43,11 @@ export const RpcDefLive = RpcDef.toLayer(
 
             yield* mailbox.offer({ _tag: "Summarizing" });
             const text = yield* summarizer.summarize(payload.query, satisfyingContents).pipe(
-              Stream.tap((chunk) => mailbox.offer({ _tag: "Chunk", delta: chunk })),
+              Stream.tap((part) =>
+                part.type === "text-delta"
+                  ? mailbox.offer({ _tag: "Chunk", delta: part.delta })
+                  : Effect.void,
+              ),
               Stream.runFold("", (accumulated, chunk) => accumulated + chunk),
             );
 
@@ -52,7 +55,6 @@ export const RpcDefLive = RpcDef.toLayer(
           }).pipe(
             Effect.timeout("2 minutes"),
             Effect.catchTag("TimeoutException", (error) => Effect.die(error)),
-            Effect.ensuring(mailbox.end),
             Effect.onError((cause) => mailbox.failCause(cause)),
           ),
         );

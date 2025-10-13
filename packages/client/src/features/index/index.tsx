@@ -1,4 +1,4 @@
-import { Result, useAtom, useAtomValue } from "@effect-atom/atom-react";
+import { Atom, Result, useAtom, useAtomValue } from "@effect-atom/atom-react";
 import * as Cause from "effect/Cause";
 import { CheckCircle2, FileText, Search, Sparkles } from "lucide-react";
 import React from "react";
@@ -89,7 +89,7 @@ export const IndexPage = () => {
   };
 
   const handleCancel = () => {
-    search({ query, abort: true });
+    search(Atom.Interrupt);
   };
 
   const isSearching = result._tag === "Success" && result.waiting;
