@@ -1,14 +1,24 @@
 import { cn } from "@/lib/utils/cn";
-import { CheckCircle2, Loader2, Search, Sparkles, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  Search,
+  Sparkles,
+  X,
+} from "lucide-react";
 import React from "react";
 
 interface PageContainerProps {
   children: React.ReactNode;
 }
 
-export const PageContainer: React.FC<PageContainerProps> = ({ children }) => (
+export const PageContainer: React.FC<
+  PageContainerProps
+> = ({ children }) => (
   <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-6">
-    <div className="w-full max-w-3xl space-y-8">{children}</div>
+    <div className="w-full max-w-3xl space-y-8">
+      {children}
+    </div>
   </div>
 );
 
@@ -17,7 +27,10 @@ interface HeaderProps {
   subtitle: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => (
+export const Header: React.FC<HeaderProps> = ({
+  title,
+  subtitle,
+}) => (
   <div className="text-center space-y-3">
     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-4">
       <Sparkles className="w-8 h-8 text-blue-400" />
@@ -69,7 +82,11 @@ export const SearchButton: React.FC<SearchButtonProps> = ({
     disabled={disabled}
     className="relative px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed rounded-xl font-medium text-white transition-all duration-300 shadow-lg hover:shadow-blue-500/25 disabled:shadow-none"
   >
-    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+    {loading ? (
+      <Loader2 className="w-5 h-5 animate-spin" />
+    ) : (
+      <Search className="w-5 h-5" />
+    )}
   </button>
 );
 
@@ -77,7 +94,9 @@ interface CancelButtonProps {
   onClick: () => void;
 }
 
-export const CancelButton: React.FC<CancelButtonProps> = ({ onClick }) => (
+export const CancelButton: React.FC<CancelButtonProps> = ({
+  onClick,
+}) => (
   <div className="flex justify-center">
     <button
       type="button"
@@ -95,7 +114,10 @@ interface SearchFormProps {
   children: React.ReactNode;
 }
 
-export const SearchForm: React.FC<SearchFormProps> = ({ onSubmit, children }) => (
+export const SearchForm: React.FC<SearchFormProps> = ({
+  onSubmit,
+  children,
+}) => (
   <div className="relative">
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="relative group">
@@ -148,7 +170,11 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
                 : "text-slate-400",
         )}
       >
-        {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : icon}
+        {isCompleted ? (
+          <CheckCircle2 className="w-5 h-5" />
+        ) : (
+          icon
+        )}
       </div>
       {isActive && !isCancelled && (
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 animate-ping opacity-20" />
@@ -175,7 +201,9 @@ interface ProgressConnectorProps {
   isLast?: boolean;
 }
 
-export const ProgressConnector: React.FC<ProgressConnectorProps> = ({ isLast = false }) =>
+export const ProgressConnector: React.FC<
+  ProgressConnectorProps
+> = ({ isLast = false }) =>
   !isLast ? (
     <div className="w-16 h-0.5 bg-gradient-to-r from-slate-600 to-slate-700 rounded-full" />
   ) : null;
@@ -184,9 +212,13 @@ interface ProgressIndicatorProps {
   children: React.ReactNode;
 }
 
-export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ children }) => (
+export const ProgressIndicator: React.FC<
+  ProgressIndicatorProps
+> = ({ children }) => (
   <div className="relative">
-    <div className="flex items-center justify-center gap-8">{children}</div>
+    <div className="flex items-center justify-center gap-8">
+      {children}
+    </div>
   </div>
 );
 
@@ -194,7 +226,9 @@ interface ResultsCardProps {
   children: React.ReactNode;
 }
 
-export const ResultsCard: React.FC<ResultsCardProps> = ({ children }) => (
+export const ResultsCard: React.FC<ResultsCardProps> = ({
+  children,
+}) => (
   <div className="relative group">
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     <div className="relative p-8 bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-2xl">
@@ -226,6 +260,8 @@ interface ContentSectionProps {
   children: React.ReactNode;
 }
 
-export const ContentSection: React.FC<ContentSectionProps> = ({ children }) => (
+export const ContentSection: React.FC<
+  ContentSectionProps
+> = ({ children }) => (
   <div className="space-y-6">{children}</div>
 );

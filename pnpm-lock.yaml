@@ -4621,7 +4621,10 @@ packages:
       {
         integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==,
       }
-    engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
+    engines:
+      {
+        node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7,
+      }
     hasBin: true
 
   buffer-crc32@1.0.0:
@@ -7202,7 +7205,8 @@ packages:
       {
         integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==,
       }
-    engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
+    engines:
+      { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
     hasBin: true
 
   natural-compare@1.4.0:
@@ -7871,7 +7875,8 @@ packages:
       {
         integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==,
       }
-    engines: { node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0 }
+    engines:
+      { node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0 }
 
   pretty-ms@7.0.1:
     resolution:

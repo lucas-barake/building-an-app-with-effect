@@ -1,20 +1,38 @@
 import { cn } from "@/lib/utils/cn";
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 
-const CollapsibleRoot = ({ ...props }: React.ComponentProps<typeof CollapsiblePrimitive.Root>) => {
-  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+const CollapsibleRoot = ({
+  ...props
+}: React.ComponentProps<
+  typeof CollapsiblePrimitive.Root
+>) => {
+  return (
+    <CollapsiblePrimitive.Root
+      data-slot="collapsible"
+      {...props}
+    />
+  );
 };
 
 const CollapsibleTrigger = ({
   ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) => {
-  return <CollapsiblePrimitive.CollapsibleTrigger data-slot="collapsible-trigger" {...props} />;
+}: React.ComponentProps<
+  typeof CollapsiblePrimitive.CollapsibleTrigger
+>) => {
+  return (
+    <CollapsiblePrimitive.CollapsibleTrigger
+      data-slot="collapsible-trigger"
+      {...props}
+    />
+  );
 };
 
 const CollapsibleContent = ({
   className,
   ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) => {
+}: React.ComponentProps<
+  typeof CollapsiblePrimitive.CollapsibleContent
+>) => {
   return (
     <CollapsiblePrimitive.CollapsibleContent
       className={cn(

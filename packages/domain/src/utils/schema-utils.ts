@@ -7,7 +7,10 @@ import { identity } from "effect/Function";
 import * as Hash from "effect/Hash";
 import * as HashSet from "effect/HashSet";
 import * as ParseResult from "effect/ParseResult";
-import { ArrayFormatter, type ParseIssue } from "effect/ParseResult";
+import {
+  ArrayFormatter,
+  type ParseIssue,
+} from "effect/ParseResult";
 import * as Predicate from "effect/Predicate";
 import * as Schema from "effect/Schema";
 import type * as SchemaAST from "effect/SchemaAST";
@@ -19,7 +22,8 @@ import * as Struct from "effect/Struct";
 
 export class DurationFromSeconds extends Schema.transform(
   Schema.NonNegative.annotations({
-    description: "a non-negative number of seconds to be decoded into a Duration",
+    description:
+      "a non-negative number of seconds to be decoded into a Duration",
   }),
   Schema.DurationFromSelf,
   {
@@ -34,7 +38,8 @@ export class DurationFromDeltaSecondsString extends Schema.compose(
   DurationFromSeconds,
 ).annotations({
   title: "DurationFromDeltaSecondsString",
-  description: "parses a string of non-negative delta-seconds into a Duration",
+  description:
+    "parses a string of non-negative delta-seconds into a Duration",
 }) {}
 
 export type FormFieldSchema = {
@@ -53,7 +58,15 @@ export type FormFieldSchema = {
   readonly minLength?: number | undefined;
   readonly maxLength?: number | undefined;
   readonly pattern?: string | undefined;
-  readonly format?: "email" | "date" | "time" | "date-time" | "uri" | "uuid" | string | undefined;
+  readonly format?:
+    | "email"
+    | "date"
+    | "time"
+    | "date-time"
+    | "uri"
+    | "uuid"
+    | string
+    | undefined;
   readonly minimum?: number | undefined;
   readonly maximum?: number | undefined;
   readonly exclusiveMinimum?: number | undefined;
@@ -65,7 +78,10 @@ export type FormFieldSchema = {
   readonly uniqueItems?: boolean | undefined;
   readonly properties?: Record<string, object> | undefined;
   readonly required?: ReadonlyArray<string> | undefined;
-  readonly additionalProperties?: boolean | object | undefined;
+  readonly additionalProperties?:
+    | boolean
+    | object
+    | undefined;
   readonly enum?: ReadonlyArray<unknown> | undefined;
   readonly const?: unknown | undefined;
   readonly allOf?: ReadonlyArray<object> | undefined;
@@ -81,7 +97,15 @@ export type FormFieldSchema = {
 
 export const FormFieldSchema = Schema.Struct({
   type: Schema.optional(
-    Schema.Literal("object", "string", "number", "integer", "boolean", "array", "null"),
+    Schema.Literal(
+      "object",
+      "string",
+      "number",
+      "integer",
+      "boolean",
+      "array",
+      "null",
+    ),
   ),
   title: Schema.optional(Schema.String),
   description: Schema.optional(Schema.String),
@@ -93,7 +117,14 @@ export const FormFieldSchema = Schema.Struct({
   pattern: Schema.optional(Schema.String),
   format: Schema.optional(
     Schema.Union(
-      Schema.Literal("email", "date", "time", "date-time", "uri", "uuid"),
+      Schema.Literal(
+        "email",
+        "date",
+        "time",
+        "date-time",
+        "uri",
+        "uuid",
+      ),
       Schema.String,
     ),
   ),
@@ -119,7 +150,9 @@ export const FormFieldSchema = Schema.Struct({
     }),
   ),
   required: Schema.optional(Schema.Array(Schema.String)),
-  additionalProperties: Schema.optional(Schema.Union(Schema.Boolean, Schema.Object)),
+  additionalProperties: Schema.optional(
+    Schema.Union(Schema.Boolean, Schema.Object),
+  ),
 
   // Validation
   enum: Schema.optional(Schema.Array(Schema.Unknown)),
@@ -185,15 +218,20 @@ export type FormJsonSchema = typeof FormJsonSchema.Type;
 export const Email = (opts?: {
   requiredMessage?: string;
   invalidMessage?: string;
-}): Schema.refine<string, Schema.filter<typeof Schema.Trim>> =>
+}): Schema.refine<
+  string,
+  Schema.filter<typeof Schema.Trim>
+> =>
   Schema.Trim.pipe(
     Schema.minLength(1, {
-      message: () => opts?.requiredMessage ?? "Email is required",
+      message: () =>
+        opts?.requiredMessage ?? "Email is required",
     }),
     Schema.pattern(
       /^(?!\.)(?!.*\.\.)([A-Z0-9_+-.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9-]*\.)+[A-Z]{2,}$/i,
       {
-        message: () => opts?.invalidMessage ?? "Invalid email",
+        message: () =>
+          opts?.invalidMessage ?? "Invalid email",
       },
     ),
     Schema.annotations({
@@ -206,7 +244,10 @@ export const Email = (opts?: {
  *
  * @category schema
  */
-export const URLString: Schema.transform<typeof Schema.URL, typeof Schema.String> = Schema.URL.pipe(
+export const URLString: Schema.transform<
+  typeof Schema.URL,
+  typeof Schema.String
+> = Schema.URL.pipe(
   Schema.transform(Schema.String, {
     decode: (input) => input.toString(),
     encode: (input) => new URL(input),
@@ -221,22 +262,35 @@ export const URLString: Schema.transform<typeof Schema.URL, typeof Schema.String
  */
 export function destructiveTransform<A, B>(
   transform: (input: A) => B,
-): <I, R>(self: Schema.Schema<A, I, R>) => Schema.Schema<Readonly<B>, I, R> {
-  return <I, R>(self: Schema.Schema<A, I, R>): Schema.Schema<Readonly<B>, I, R> => {
-    return Schema.transformOrFail(self, Schema.Any as Schema.Schema<Readonly<B>>, {
-      decode: (input) =>
-        ParseResult.try({
-          try: () => transform(input) as Readonly<B>,
-          catch: () => new ParseResult.Type(self.ast, input, "Error applying transformation"),
-        }),
-      encode: () =>
-        ParseResult.fail(
-          new ParseResult.Forbidden(
-            self.ast,
-            "Encoding is not supported for destructive transformations",
+): <I, R>(
+  self: Schema.Schema<A, I, R>,
+) => Schema.Schema<Readonly<B>, I, R> {
+  return <I, R>(
+    self: Schema.Schema<A, I, R>,
+  ): Schema.Schema<Readonly<B>, I, R> => {
+    return Schema.transformOrFail(
+      self,
+      Schema.Any as Schema.Schema<Readonly<B>>,
+      {
+        decode: (input) =>
+          ParseResult.try({
+            try: () => transform(input) as Readonly<B>,
+            catch: () =>
+              new ParseResult.Type(
+                self.ast,
+                input,
+                "Error applying transformation",
+              ),
+          }),
+        encode: () =>
+          ParseResult.fail(
+            new ParseResult.Forbidden(
+              self.ast,
+              "Encoding is not supported for destructive transformations",
+            ),
           ),
-        ),
-    });
+      },
+    );
   };
 }
 
@@ -247,12 +301,17 @@ export function destructiveTransform<A, B>(
  */
 export const TrimNonEmpty = (opts?: {
   message?: string;
-}): Schema.refine<string, Schema.filter<typeof Schema.Trim>> =>
+}): Schema.refine<
+  string,
+  Schema.filter<typeof Schema.Trim>
+> =>
   Schema.Trim.pipe(
     Schema.minLength(1),
     Schema.maxLength(5000),
     Schema.annotations({
-      message: () => opts?.message ?? "Expected a non-empty trimmed string",
+      message: () =>
+        opts?.message ??
+        "Expected a non-empty trimmed string",
       override: true,
     }),
   );
@@ -304,7 +363,11 @@ export const ArrayFromFallible = <A, I, R>(
   schema: Schema.Schema<A, I, R>,
 ): Schema.transform<
   Schema.Array$<Schema.NullOr<Schema.Schema<A, I, R>>>,
-  Schema.SchemaClass<ReadonlyArray<A>, ReadonlyArray<A>, never>
+  Schema.SchemaClass<
+    ReadonlyArray<A>,
+    ReadonlyArray<A>,
+    never
+  >
 > =>
   Schema.Array(
     Schema.NullOr(schema).annotations({
@@ -317,11 +380,15 @@ export const ArrayFromFallible = <A, I, R>(
         ),
     }),
   ).pipe(
-    Schema.transform(Schema.typeSchema(Schema.Array(schema)), {
-      decode: (array) => array.filter(Predicate.isNotNull),
-      encode: identity,
-      strict: true,
-    }),
+    Schema.transform(
+      Schema.typeSchema(Schema.Array(schema)),
+      {
+        decode: (array) =>
+          array.filter(Predicate.isNotNull),
+        encode: identity,
+        strict: true,
+      },
+    ),
   );
 
 /**
@@ -334,16 +401,27 @@ export const HashSetFromFallibleArray = <A, I, R>(
 ): Schema.transform<
   Schema.transform<
     Schema.Array$<Schema.NullOr<Schema.Schema<A, I, R>>>,
-    Schema.SchemaClass<ReadonlyArray<A>, ReadonlyArray<A>, never>
+    Schema.SchemaClass<
+      ReadonlyArray<A>,
+      ReadonlyArray<A>,
+      never
+    >
   >,
-  Schema.SchemaClass<HashSet.HashSet<A>, HashSet.HashSet<A>, never>
+  Schema.SchemaClass<
+    HashSet.HashSet<A>,
+    HashSet.HashSet<A>,
+    never
+  >
 > =>
   ArrayFromFallible(schema).pipe(
-    Schema.transform(Schema.typeSchema(Schema.HashSet(schema)), {
-      decode: (array) => HashSet.fromIterable(array),
-      encode: (hashSet) => Array.fromIterable(hashSet),
-      strict: true,
-    }),
+    Schema.transform(
+      Schema.typeSchema(Schema.HashSet(schema)),
+      {
+        decode: (array) => HashSet.fromIterable(array),
+        encode: (hashSet) => Array.fromIterable(hashSet),
+        strict: true,
+      },
+    ),
   );
 
 /**
@@ -356,16 +434,23 @@ export const SetFromFallibleArray = <A, I, R>(
 ): Schema.transform<
   Schema.transform<
     Schema.Array$<Schema.NullOr<Schema.Schema<A, I, R>>>,
-    Schema.SchemaClass<ReadonlyArray<A>, ReadonlyArray<A>, never>
+    Schema.SchemaClass<
+      ReadonlyArray<A>,
+      ReadonlyArray<A>,
+      never
+    >
   >,
   Schema.SchemaClass<Set<A>, Set<A>, never>
 > =>
   ArrayFromFallible(schema).pipe(
-    Schema.transform(Schema.typeSchema(Schema.Set(schema)), {
-      decode: (array) => new Set(array),
-      encode: (set) => Array.fromIterable(set),
-      strict: true,
-    }),
+    Schema.transform(
+      Schema.typeSchema(Schema.Set(schema)),
+      {
+        decode: (array) => new Set(array),
+        encode: (set) => Array.fromIterable(set),
+        strict: true,
+      },
+    ),
   );
 
 /**
@@ -385,13 +470,21 @@ export const HashSetFromIterable = <A, I, R>(
   schema: Schema.Schema<A, I, R>,
 ): Schema.transform<
   Schema.Array$<Schema.Schema<A, I, R>>,
-  Schema.SchemaClass<HashSet.HashSet<A>, HashSet.HashSet<A>, never>
+  Schema.SchemaClass<
+    HashSet.HashSet<A>,
+    HashSet.HashSet<A>,
+    never
+  >
 > =>
-  Schema.transform(Schema.Array(schema), Schema.typeSchema(Schema.HashSet(schema)), {
-    strict: true,
-    decode: (array) => HashSet.fromIterable(array),
-    encode: (hashSet) => Array.fromIterable(hashSet),
-  });
+  Schema.transform(
+    Schema.Array(schema),
+    Schema.typeSchema(Schema.HashSet(schema)),
+    {
+      strict: true,
+      decode: (array) => HashSet.fromIterable(array),
+      encode: (hashSet) => Array.fromIterable(hashSet),
+    },
+  );
 
 // ---------------
 // Formatting
@@ -448,31 +541,42 @@ export const WithEquality =
         hashKey: typeof noHashKey;
         equalityFn: (a: A, b: A) => boolean;
       }) =>
-  (schema: Schema.Schema<A, I, R>): Schema.Schema<A, I, R> =>
+  (
+    schema: Schema.Schema<A, I, R>,
+  ): Schema.Schema<A, I, R> =>
     Schema.transform(schema, Schema.Any, {
       decode: (value: A) => {
-        const extensions: Partial<Record<symbol, unknown>> = {
-          [Hash.symbol](this: A): number {
-            if (hashKey === noHashKey) {
-              return 0;
-            }
-            return Hash.cached(this, Hash.hash(this[hashKey]));
-          },
-          [Equal.symbol](that: unknown): boolean {
-            if (!Schema.is(schema)(that)) {
-              return false;
-            }
+        const extensions: Partial<Record<symbol, unknown>> =
+          {
+            [Hash.symbol](this: A): number {
+              if (hashKey === noHashKey) {
+                return 0;
+              }
+              return Hash.cached(
+                this,
+                Hash.hash(this[hashKey]),
+              );
+            },
+            [Equal.symbol](that: unknown): boolean {
+              if (!Schema.is(schema)(that)) {
+                return false;
+              }
 
-            if (equalityFn !== undefined) {
-              return equalityFn(this as unknown as A, that);
-            }
+              if (equalityFn !== undefined) {
+                return equalityFn(
+                  this as unknown as A,
+                  that,
+                );
+              }
 
-            return Hash.hash(this) === Hash.hash(that);
-          },
-        };
+              return Hash.hash(this) === Hash.hash(that);
+            },
+          };
 
         if (equalityFn !== undefined) {
-          extensions[Equal.symbol] = function (that: unknown): boolean {
+          extensions[Equal.symbol] = function (
+            that: unknown,
+          ): boolean {
             return (
               Equal.isEqual(that) &&
               Schema.is(schema)(that) &&
@@ -509,41 +613,57 @@ export const deriveAndAttachProperty =
   >(args: {
     key: Key;
     typeSchema: Schema.Schema<ToA, ToI, ToR>;
-    decode: (input: FromA) => Effect.Effect<ToA, never, DecodeR>;
+    decode: (
+      input: FromA,
+    ) => Effect.Effect<ToA, never, DecodeR>;
   }) =>
   (
     self: Schema.Schema<FromA, FromI, FromR>,
-  ): Schema.Schema<FromA & { readonly [K in Key]: ToA }, FromI, FromR | ToR | DecodeR> => {
+  ): Schema.Schema<
+    FromA & { readonly [K in Key]: ToA },
+    FromI,
+    FromR | ToR | DecodeR
+  > => {
     const derivedSchema = Schema.typeSchema(
       Schema.Struct({
         [args.key]: args.typeSchema,
       } as const),
     );
 
-    const extendedSchema = Schema.extend(Schema.typeSchema(self), derivedSchema);
+    const extendedSchema = Schema.extend(
+      Schema.typeSchema(self),
+      derivedSchema,
+    );
 
-    return Schema.transformOrFail(self, Schema.typeSchema(extendedSchema), {
-      decode: (input) =>
-        Effect.gen(function* () {
-          const result = args.decode(input);
+    return Schema.transformOrFail(
+      self,
+      Schema.typeSchema(extendedSchema),
+      {
+        decode: (input) =>
+          Effect.gen(function* () {
+            const result = args.decode(input);
 
-          if (Effect.isEffect(result)) {
-            return yield* result.pipe(
-              Effect.map((value) => ({
-                ...input,
-                [args.key]: value,
-              })),
-            );
-          }
+            if (Effect.isEffect(result)) {
+              return yield* result.pipe(
+                Effect.map((value) => ({
+                  ...input,
+                  [args.key]: value,
+                })),
+              );
+            }
 
-          return {
-            ...input,
-            [args.key]: result,
-          };
-        }),
-      encode: (struct) => ParseResult.succeed(Struct.omit(args.key)(struct)),
-      strict: false,
-    });
+            return {
+              ...input,
+              [args.key]: result,
+            };
+          }),
+        encode: (struct) =>
+          ParseResult.succeed(
+            Struct.omit(args.key)(struct),
+          ),
+        strict: false,
+      },
+    );
   };
 
 /**
@@ -555,21 +675,38 @@ export const fromKey: <const K extends string>(
   key: K,
 ) => <A, I, R>(
   self: Schema.Schema<A, I, R>,
-) => Schema.PropertySignature<":", A, K, ":", I, false, R> =
+) => Schema.PropertySignature<
+  ":",
+  A,
+  K,
+  ":",
+  I,
+  false,
+  R
+> =
   <const K extends string>(key: K) =>
   <A, I, R>(self: Schema.Schema<A, I, R>) =>
-    self.pipe(Schema.propertySignature, Schema.fromKey(key));
+    self.pipe(
+      Schema.propertySignature,
+      Schema.fromKey(key),
+    );
 
 /**
  * Reverses a schema, i.e., swaps the encoded and decoded types.
  *
  * @category schema
  */
-export const reverseSchema = <A, I, R>(schema: Schema.Schema<A, I, R>): Schema.Schema<I, A, R> =>
-  Schema.transformOrFail(Schema.typeSchema(schema), Schema.encodedSchema(schema), {
-    decode: ParseResult.encode(schema),
-    encode: ParseResult.decode(schema),
-  });
+export const reverseSchema = <A, I, R>(
+  schema: Schema.Schema<A, I, R>,
+): Schema.Schema<I, A, R> =>
+  Schema.transformOrFail(
+    Schema.typeSchema(schema),
+    Schema.encodedSchema(schema),
+    {
+      decode: ParseResult.encode(schema),
+      encode: ParseResult.decode(schema),
+    },
+  );
 
 // ---------------
 // General Utilities

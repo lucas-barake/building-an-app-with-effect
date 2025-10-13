@@ -19,7 +19,9 @@ const Label = ({
       {...props}
     >
       {props.children}
-      {required && <span className="ml-0.5 text-red-500">*</span>}
+      {required && (
+        <span className="ml-0.5 text-red-500">*</span>
+      )}
     </LabelPrimitive.Root>
   );
 };

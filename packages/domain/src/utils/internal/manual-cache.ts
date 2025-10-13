@@ -17,7 +17,9 @@ import type * as Scope from "effect/Scope";
  * @since 1.0.0
  * @category symbols
  */
-export const ManualCacheTypeId = Symbol.for("@app/ManualCache");
+export const ManualCacheTypeId = Symbol.for(
+  "@app/ManualCache",
+);
 export type ManualCacheTypeId = typeof ManualCacheTypeId;
 
 /**
@@ -25,7 +27,9 @@ export type ManualCacheTypeId = typeof ManualCacheTypeId;
  * @since 1.0.0
  * @category symbols
  */
-export const MapKeyTypeId = Symbol.for("@app/ManualCache/MapKey");
+export const MapKeyTypeId = Symbol.for(
+  "@app/ManualCache/MapKey",
+);
 export type MapKeyTypeId = typeof MapKeyTypeId;
 
 /**
@@ -43,9 +47,14 @@ export type ManualCache<in out Key, in out Value> = {
     readonly _Value: (_: Value) => Value;
   };
   /** Retrieves the value if present and not expired, updating LRU status. */
-  readonly get: (key: Key) => Effect.Effect<Option.Option<Value>>;
+  readonly get: (
+    key: Key,
+  ) => Effect.Effect<Option.Option<Value>>;
   /** Sets/updates a value, resetting TTL and updating LRU status. Evicts if capacity exceeded. */
-  readonly set: (key: Key, value: Value) => Effect.Effect<void>;
+  readonly set: (
+    key: Key,
+    value: Value,
+  ) => Effect.Effect<void>;
   /** Checks if a key exists and is not expired. */
   readonly contains: (key: Key) => Effect.Effect<boolean>;
   /** Removes a key from the cache. */
@@ -140,16 +149,20 @@ export const complete = <Key, Value>(
  * @since 1.0.0
  * @category constructors
  */
-export const makeMapKey = <K>(current: K): MapKey<K> => new MapKeyImpl(current);
+export const makeMapKey = <K>(current: K): MapKey<K> =>
+  new MapKeyImpl(current);
 
 /**
  * @since 1.0.0
  * @category refinements
  */
-export const isMapKey = (u: unknown): u is MapKey<unknown> => hasProperty(u, MapKeyTypeId);
+export const isMapKey = (
+  u: unknown,
+): u is MapKey<unknown> => hasProperty(u, MapKeyTypeId);
 
 class MapKeyImpl<out K> implements MapKey<K> {
-  public readonly [MapKeyTypeId]: MapKeyTypeId = MapKeyTypeId;
+  public readonly [MapKeyTypeId]: MapKeyTypeId =
+    MapKeyTypeId;
   public previous: MapKey<K> | undefined = undefined;
   public next: MapKey<K> | undefined = undefined;
   constructor(public readonly current: K) {}
@@ -157,7 +170,11 @@ class MapKeyImpl<out K> implements MapKey<K> {
     return Hash.hash(this.current);
   }
   public [Equal.symbol](that: unknown): boolean {
-    return this === that || (isMapKey(that) && Equal.equals(this.current, that.current));
+    return (
+      this === that ||
+      (isMapKey(that) &&
+        Equal.equals(this.current, that.current))
+    );
   }
 }
 
@@ -193,7 +210,11 @@ class KeySetImpl<in out K> implements KeySet<K> {
   }
 
   public add(key: MapKey<K>): void {
-    if (key.previous !== undefined || key.next !== undefined || this.head === key) {
+    if (
+      key.previous !== undefined ||
+      key.next !== undefined ||
+      this.head === key
+    ) {
       this.removeNode(key);
     }
     if (this.tail === undefined) {
@@ -220,7 +241,8 @@ class KeySetImpl<in out K> implements KeySet<K> {
  * @since 1.0.0
  * @category constructors
  */
-export const makeKeySet = <K>(): KeySet<K> => new KeySetImpl<K>();
+export const makeKeySet = <K>(): KeySet<K> =>
+  new KeySetImpl<K>();
 
 /**
  * Mutable state of the ManualCache.
@@ -228,7 +250,10 @@ export const makeKeySet = <K>(): KeySet<K> => new KeySetImpl<K>();
  * @category models
  */
 export type ManualCacheState<in out Key, in out Value> = {
-  map: MutableHashMap.MutableHashMap<Key, MapValue<Key, Value>>;
+  map: MutableHashMap.MutableHashMap<
+    Key,
+    MapValue<Key, Value>
+  >;
   keys: KeySet<Key>;
   accesses: MutableQueue.MutableQueue<MapKey<Key>>;
   updating: MutableRef.MutableRef<boolean>;
@@ -242,7 +267,10 @@ export type ManualCacheState<in out Key, in out Value> = {
  * @category constructors
  */
 export const makeManualCacheState = <Key, Value>(
-  map: MutableHashMap.MutableHashMap<Key, MapValue<Key, Value>>,
+  map: MutableHashMap.MutableHashMap<
+    Key,
+    MapValue<Key, Value>
+  >,
   keys: KeySet<Key>,
   accesses: MutableQueue.MutableQueue<MapKey<Key>>,
   updating: MutableRef.MutableRef<boolean>,
@@ -262,7 +290,10 @@ export const makeManualCacheState = <Key, Value>(
  * @since 1.0.0
  * @category constructors
  */
-export const initialManualCacheState = <Key, Value>(): ManualCacheState<Key, Value> =>
+export const initialManualCacheState = <
+  Key,
+  Value,
+>(): ManualCacheState<Key, Value> =>
   makeManualCacheState(
     MutableHashMap.empty(),
     makeKeySet(),
@@ -272,7 +303,9 @@ export const initialManualCacheState = <Key, Value>(): ManualCacheState<Key, Val
     MutableRef.make(0),
   );
 
-class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Value> {
+class ManualCacheImpl<in out Key, in out Value>
+  implements ManualCache<Key, Value>
+{
   public readonly [ManualCacheTypeId] = {
     _Key: (_: Key) => _,
     _Value: (_: Value) => _,
@@ -289,7 +322,13 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
 
   private trackAccess(key: MapKey<Key>): void {
     MutableQueue.offer(this.cacheState.accesses, key);
-    if (MutableRef.compareAndSet(this.cacheState.updating, false, true)) {
+    if (
+      MutableRef.compareAndSet(
+        this.cacheState.updating,
+        false,
+        true,
+      )
+    ) {
       try {
         let loop = true;
         while (loop) {
@@ -297,24 +336,42 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
             this.cacheState.accesses,
             MutableQueue.EmptyMutableQueue,
           );
-          if (keyToUpdate === MutableQueue.EmptyMutableQueue) {
+          if (
+            keyToUpdate === MutableQueue.EmptyMutableQueue
+          ) {
             loop = false; // Queue is empty
           } else {
             const currentEntry = Option.getOrUndefined(
-              MutableHashMap.get(this.cacheState.map, keyToUpdate.current),
+              MutableHashMap.get(
+                this.cacheState.map,
+                keyToUpdate.current,
+              ),
             );
-            if (currentEntry !== undefined && currentEntry.key === keyToUpdate) {
+            if (
+              currentEntry !== undefined &&
+              currentEntry.key === keyToUpdate
+            ) {
               this.cacheState.keys.add(keyToUpdate); // Update LRU order (move to tail)
             }
           }
         }
 
-        let currentSize = MutableHashMap.size(this.cacheState.map);
+        let currentSize = MutableHashMap.size(
+          this.cacheState.map,
+        );
         while (currentSize > this.capacity) {
           const keyToRemove = this.cacheState.keys.remove();
           if (keyToRemove !== undefined) {
-            if (MutableHashMap.has(this.cacheState.map, keyToRemove.current)) {
-              MutableHashMap.remove(this.cacheState.map, keyToRemove.current);
+            if (
+              MutableHashMap.has(
+                this.cacheState.map,
+                keyToRemove.current,
+              )
+            ) {
+              MutableHashMap.remove(
+                this.cacheState.map,
+                keyToRemove.current,
+              );
               currentSize--;
             }
           } else {
@@ -327,36 +384,56 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     }
   }
 
-  private hasExpired(clock: Clock.Clock, expireAtMillis: number): boolean {
-    return clock.unsafeCurrentTimeMillis() >= expireAtMillis;
+  private hasExpired(
+    clock: Clock.Clock,
+    expireAtMillis: number,
+  ): boolean {
+    return (
+      clock.unsafeCurrentTimeMillis() >= expireAtMillis
+    );
   }
 
   private trackHit(): void {
-    MutableRef.set(this.cacheState.hits, MutableRef.get(this.cacheState.hits) + 1);
+    MutableRef.set(
+      this.cacheState.hits,
+      MutableRef.get(this.cacheState.hits) + 1,
+    );
   }
 
   private trackMiss(): void {
-    MutableRef.set(this.cacheState.misses, MutableRef.get(this.cacheState.misses) + 1);
+    MutableRef.set(
+      this.cacheState.misses,
+      MutableRef.get(this.cacheState.misses) + 1,
+    );
   }
 
   private *nonExpiredEntries(clock: Clock.Clock) {
     for (const [key, mapValue] of this.cacheState.map) {
-      if (!this.hasExpired(clock, mapValue.expireAtMillis)) {
+      if (
+        !this.hasExpired(clock, mapValue.expireAtMillis)
+      ) {
         yield [key, mapValue.value] as const;
       }
     }
   }
 
-  public get(key: Key): Effect.Effect<Option.Option<Value>> {
+  public get(
+    key: Key,
+  ): Effect.Effect<Option.Option<Value>> {
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
-        const mapValueOpt = MutableHashMap.get(this.cacheState.map, key);
+        const mapValueOpt = MutableHashMap.get(
+          this.cacheState.map,
+          key,
+        );
         if (Option.isNone(mapValueOpt)) {
           this.trackMiss();
           return Option.none();
         }
         const mapValue = mapValueOpt.value;
-        if (this.hasExpired(clock, mapValue.expireAtMillis)) {
+        if (
+          this.hasExpired(clock, mapValue.expireAtMillis)
+        ) {
           this.trackMiss();
           MutableHashMap.remove(this.cacheState.map, key);
           return Option.none();
@@ -372,17 +449,32 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         const now = clock.unsafeCurrentTimeMillis();
-        const expireAtMillis = now + Duration.toMillis(this.timeToLive);
-        const entryStats: EntryStats = { loadedMillis: now };
+        const expireAtMillis =
+          now + Duration.toMillis(this.timeToLive);
+        const entryStats: EntryStats = {
+          loadedMillis: now,
+        };
         let mapKey: MapKey<Key>;
-        const existingEntryOpt = MutableHashMap.get(this.cacheState.map, key);
+        const existingEntryOpt = MutableHashMap.get(
+          this.cacheState.map,
+          key,
+        );
         if (Option.isSome(existingEntryOpt)) {
           mapKey = existingEntryOpt.value.key;
         } else {
           mapKey = makeMapKey(key);
         }
-        const newMapValue = complete(mapKey, value, entryStats, expireAtMillis);
-        MutableHashMap.set(this.cacheState.map, key, newMapValue);
+        const newMapValue = complete(
+          mapKey,
+          value,
+          entryStats,
+          expireAtMillis,
+        );
+        MutableHashMap.set(
+          this.cacheState.map,
+          key,
+          newMapValue,
+        );
         this.trackAccess(mapKey);
       }),
     );
@@ -403,8 +495,10 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     this.cacheState.keys.head = undefined;
     this.cacheState.keys.tail = undefined;
     while (
-      MutableQueue.poll(this.cacheState.accesses, MutableQueue.EmptyMutableQueue) !==
-      MutableQueue.EmptyMutableQueue
+      MutableQueue.poll(
+        this.cacheState.accesses,
+        MutableQueue.EmptyMutableQueue,
+      ) !== MutableQueue.EmptyMutableQueue
     ) {
       // draining
     }
@@ -416,8 +510,11 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         let count = 0;
-        for (const [_key, mapValue] of this.cacheState.map) {
-          if (!this.hasExpired(clock, mapValue.expireAtMillis)) {
+        for (const [_key, mapValue] of this.cacheState
+          .map) {
+          if (
+            !this.hasExpired(clock, mapValue.expireAtMillis)
+          ) {
             count++;
           }
         }
@@ -430,7 +527,9 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         const valuesArray: Array<Value> = [];
-        for (const [_key, value] of this.nonExpiredEntries(clock)) {
+        for (const [_key, value] of this.nonExpiredEntries(
+          clock,
+        )) {
           valuesArray.push(value);
         }
         return valuesArray;
@@ -442,7 +541,9 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         const entriesArray: Array<[Key, Value]> = [];
-        for (const [key, value] of this.nonExpiredEntries(clock)) {
+        for (const [key, value] of this.nonExpiredEntries(
+          clock,
+        )) {
           entriesArray.push([key, value]);
         }
         return entriesArray;
@@ -454,7 +555,9 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         const keysArray: Array<Key> = [];
-        for (const [key, _value] of this.nonExpiredEntries(clock)) {
+        for (const [key, _value] of this.nonExpiredEntries(
+          clock,
+        )) {
           keysArray.push(key);
         }
         return keysArray;
@@ -466,7 +569,9 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
     return Effect.clockWith((clock) =>
       Effect.sync(() => {
         for (const [key, mapValue] of this.cacheState.map) {
-          if (this.hasExpired(clock, mapValue.expireAtMillis)) {
+          if (
+            this.hasExpired(clock, mapValue.expireAtMillis)
+          ) {
             MutableHashMap.remove(this.cacheState.map, key);
           }
         }
@@ -498,20 +603,31 @@ class ManualCacheImpl<in out Key, in out Value> implements ManualCache<Key, Valu
 export const make = <Key, Value>(options: {
   readonly capacity: number;
   readonly timeToLive: Duration.DurationInput;
-}): Effect.Effect<ManualCache<Key, Value>, never, Scope.Scope> => {
+}): Effect.Effect<
+  ManualCache<Key, Value>,
+  never,
+  Scope.Scope
+> => {
   const timeToLive = Duration.decode(options.timeToLive);
   const capacity = Math.max(0, options.capacity);
 
-  return Effect.sync(() => new ManualCacheImpl<Key, Value>(capacity, timeToLive)).pipe(
+  return Effect.sync(
+    () =>
+      new ManualCacheImpl<Key, Value>(capacity, timeToLive),
+  ).pipe(
     Effect.flatMap((cache) => {
-      const evictionInterval = Duration.millis(Math.max(1000, Duration.toMillis(timeToLive)));
+      const evictionInterval = Duration.millis(
+        Math.max(1000, Duration.toMillis(timeToLive)),
+      );
 
       const periodicEviction = Effect.repeat(
         cache.evictExpired(),
         Schedule.fixed(evictionInterval),
       );
 
-      return Effect.forkScoped(periodicEviction).pipe(Effect.as(cache));
+      return Effect.forkScoped(periodicEviction).pipe(
+        Effect.as(cache),
+      );
     }),
   );
 };

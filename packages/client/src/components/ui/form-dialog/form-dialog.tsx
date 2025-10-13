@@ -6,9 +6,15 @@ import { Button } from "../button";
 import { Dialog } from "../dialog";
 import { FormDialogContext } from "./use-form-dialog-context";
 
-const useFormDialogBlocker = (isDirty: boolean, disabled = false) => {
-  const [showConfirmDialog, setShowConfirmDialog] = React.useState(false);
-  const [pendingClose, setPendingClose] = React.useState<(() => void) | null>(null);
+const useFormDialogBlocker = (
+  isDirty: boolean,
+  disabled = false,
+) => {
+  const [showConfirmDialog, setShowConfirmDialog] =
+    React.useState(false);
+  const [pendingClose, setPendingClose] = React.useState<
+    (() => void) | null
+  >(null);
 
   const handleClose = React.useCallback(
     (closeCallback: () => void) => {
@@ -56,26 +62,36 @@ const FormDialogRoot = ({
   onOpenChange,
   ...props
 }: FormDialogRootProps) => {
-  const [contextIsDirty, setContextIsDirty] = React.useState(false);
-  const [registeredFormApi, setRegisteredFormApi] = React.useState<AnyFormApi | undefined>(
-    undefined,
-  );
+  const [contextIsDirty, setContextIsDirty] =
+    React.useState(false);
+  const [registeredFormApi, setRegisteredFormApi] =
+    React.useState<AnyFormApi | undefined>(undefined);
 
   const activeForm = form ?? registeredFormApi;
-  const placeholderStore = React.useMemo(() => new Store({ isDirty: false }), []);
+  const placeholderStore = React.useMemo(
+    () => new Store({ isDirty: false }),
+    [],
+  );
   const formIsDirty = useStore(
-    activeForm?.store ?? (placeholderStore as unknown as AnyFormApi["store"]),
+    activeForm?.store ??
+      (placeholderStore as unknown as AnyFormApi["store"]),
     (state) => state.isDirty,
   );
-  const isDirty = propIsDirty ?? (formIsDirty || contextIsDirty);
-  const { cancelClose, confirmClose, handleClose, showConfirmDialog } = useFormDialogBlocker(
-    isDirty,
-    disabled,
-  );
+  const isDirty =
+    propIsDirty ?? (formIsDirty || contextIsDirty);
+  const {
+    cancelClose,
+    confirmClose,
+    handleClose,
+    showConfirmDialog,
+  } = useFormDialogBlocker(isDirty, disabled);
 
-  const registerFormApi = React.useCallback((formApi: AnyFormApi) => {
-    setRegisteredFormApi(formApi);
-  }, []);
+  const registerFormApi = React.useCallback(
+    (formApi: AnyFormApi) => {
+      setRegisteredFormApi(formApi);
+    },
+    [],
+  );
 
   const unregisterFormApi = React.useCallback(() => {
     setRegisteredFormApi(undefined);
@@ -86,7 +102,9 @@ const FormDialogRoot = ({
       setIsDirty: setContextIsDirty,
       registerFormApi,
       unregisterFormApi,
-      ...(activeForm !== undefined && { formApi: activeForm }),
+      ...(activeForm !== undefined && {
+        formApi: activeForm,
+      }),
     }),
     [activeForm, registerFormApi, unregisterFormApi],
   );
@@ -107,7 +125,11 @@ const FormDialogRoot = ({
 
   return (
     <FormDialogContext.Provider value={contextValue}>
-      <DialogPrimitive.Root data-slot="dialog" onOpenChange={handleOpenChange} {...props} />
+      <DialogPrimitive.Root
+        data-slot="dialog"
+        onOpenChange={handleOpenChange}
+        {...props}
+      />
       <DialogPrimitive.Root
         open={showConfirmDialog}
         onOpenChange={(open) => {
@@ -124,15 +146,22 @@ const FormDialogRoot = ({
                 Unsaved Changes
               </DialogPrimitive.Title>
               <DialogPrimitive.Description className="text-muted-foreground">
-                You have unsaved changes. Are you sure you want to close this dialog? Your changes
-                will be lost.
+                You have unsaved changes. Are you sure you
+                want to close this dialog? Your changes will
+                be lost.
               </DialogPrimitive.Description>
             </div>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <Button variant="secondary" onClick={cancelClose}>
+              <Button
+                variant="secondary"
+                onClick={cancelClose}
+              >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={confirmClose}>
+              <Button
+                variant="destructive"
+                onClick={confirmClose}
+              >
                 Discard Changes
               </Button>
             </div>
@@ -143,27 +172,40 @@ const FormDialogRoot = ({
   );
 };
 
-const FormDialogTrigger = (props: React.ComponentProps<typeof Dialog.Trigger>) => {
+const FormDialogTrigger = (
+  props: React.ComponentProps<typeof Dialog.Trigger>,
+) => {
   return <Dialog.Trigger {...props} />;
 };
 
-const FormDialogPortal = (props: React.ComponentProps<typeof Dialog.Portal>) => {
+const FormDialogPortal = (
+  props: React.ComponentProps<typeof Dialog.Portal>,
+) => {
   return <Dialog.Portal {...props} />;
 };
 
-const FormDialogClose = (props: React.ComponentProps<typeof Dialog.Close>) => {
+const FormDialogClose = (
+  props: React.ComponentProps<typeof Dialog.Close>,
+) => {
   return <Dialog.Close {...props} />;
 };
 
-const FormDialogOverlay = (props: React.ComponentProps<typeof Dialog.Overlay>) => {
+const FormDialogOverlay = (
+  props: React.ComponentProps<typeof Dialog.Overlay>,
+) => {
   return <Dialog.Overlay {...props} />;
 };
 
-type FormDialogContentProps = React.ComponentProps<typeof Dialog.Content> & {
+type FormDialogContentProps = React.ComponentProps<
+  typeof Dialog.Content
+> & {
   overlayClassName?: string;
 };
 
-const FormDialogContent = ({ overlayClassName, ...props }: FormDialogContentProps) => {
+const FormDialogContent = ({
+  overlayClassName,
+  ...props
+}: FormDialogContentProps) => {
   return (
     <FormDialogPortal>
       <FormDialogOverlay className={overlayClassName} />
@@ -172,24 +214,35 @@ const FormDialogContent = ({ overlayClassName, ...props }: FormDialogContentProp
   );
 };
 
-const FormDialogHeader = (props: React.ComponentProps<typeof Dialog.Header>) => {
+const FormDialogHeader = (
+  props: React.ComponentProps<typeof Dialog.Header>,
+) => {
   return <Dialog.Header {...props} />;
 };
 
-const FormDialogFooter = (props: React.ComponentProps<typeof Dialog.Footer>) => {
+const FormDialogFooter = (
+  props: React.ComponentProps<typeof Dialog.Footer>,
+) => {
   return <Dialog.Footer {...props} />;
 };
 
-const FormDialogTitle = (props: React.ComponentProps<typeof Dialog.Title>) => {
+const FormDialogTitle = (
+  props: React.ComponentProps<typeof Dialog.Title>,
+) => {
   return <Dialog.Title {...props} />;
 };
 
-const FormDialogDescription = (props: React.ComponentProps<typeof Dialog.Description>) => {
+const FormDialogDescription = (
+  props: React.ComponentProps<typeof Dialog.Description>,
+) => {
   return <Dialog.Description {...props} />;
 };
 
 const FormCancelButton = (
-  props: Omit<React.ComponentProps<typeof Button>, "children" | "variant"> & {
+  props: Omit<
+    React.ComponentProps<typeof Button>,
+    "children" | "variant"
+  > & {
     children?: React.ReactNode;
   },
 ) => {

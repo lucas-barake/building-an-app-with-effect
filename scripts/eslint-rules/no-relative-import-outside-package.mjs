@@ -12,7 +12,8 @@ import { readPackageUpSync } from "read-package-up";
 export default {
   meta: {
     docs: {
-      description: "prevent relative imports above the nearest package.json",
+      description:
+        "prevent relative imports above the nearest package.json",
       category: "Best Practices",
       recommended: true,
     },
@@ -47,7 +48,10 @@ export default {
 
     const assertNoSrcInAbsoluteImport = (importPath) => {
       // Check if it's an @org scoped import that includes /src
-      if (scopedRegExp.test(importPath) && importPath.includes("/src")) {
+      if (
+        scopedRegExp.test(importPath) &&
+        importPath.includes("/src")
+      ) {
         return true;
       }
       return false;
@@ -77,7 +81,8 @@ export default {
 
       if (!packagePaths[fileBasePath]) {
         // biome-ignore lint/suspicious/noAssignInExpressions: easy of use
-        const packageInfo = (packagePaths[fileBasePath] = {});
+        const packageInfo = (packagePaths[fileBasePath] =
+          {});
 
         // should only call this if the current filename path doesn't include a previously found package
         const nearestPkg = readPackageUpSync({
@@ -110,14 +115,21 @@ export default {
             node,
             message: `Import "${importPath}" should not include "/src" in the path.`,
             fix(fixer) {
-              const fixedPath = importPath.replace(/\/src(?=\/|$)/, "");
-              return fixer.replaceText(node.source, `'${fixedPath}'`);
+              const fixedPath = importPath.replace(
+                /\/src(?=\/|$)/,
+                "",
+              );
+              return fixer.replaceText(
+                node.source,
+                `'${fixedPath}'`,
+              );
             },
           });
           return;
         }
 
-        const failPackage = assertNoRelativeImportPath(importPath);
+        const failPackage =
+          assertNoRelativeImportPath(importPath);
         if (failPackage) {
           context.report({
             node,
@@ -135,12 +147,24 @@ export default {
               if (packageName) {
                 // Create the absolute import path
                 // Remove /src/ directory and file extensions
-                let absolutePath = importPath.replace(/(?:\.\.\/)+.*?\//, `@org/${packageName}/`);
+                let absolutePath = importPath.replace(
+                  /(?:\.\.\/)+.*?\//,
+                  `@org/${packageName}/`,
+                );
                 // Remove /src/ directory if present
-                absolutePath = absolutePath.replace(/\/src\//, "/");
+                absolutePath = absolutePath.replace(
+                  /\/src\//,
+                  "/",
+                );
                 // Remove file extension
-                absolutePath = absolutePath.replace(/\.(js|jsx|ts|tsx)$/, "");
-                return fixer.replaceText(node.source, `'${absolutePath}'`);
+                absolutePath = absolutePath.replace(
+                  /\.(js|jsx|ts|tsx)$/,
+                  "",
+                );
+                return fixer.replaceText(
+                  node.source,
+                  `'${absolutePath}'`,
+                );
               }
               return null;
             },
@@ -153,19 +177,29 @@ export default {
           const [requirePath] = node.arguments;
           if (!requirePath) return;
 
-          if (assertNoSrcInAbsoluteImport(requirePath.value)) {
+          if (
+            assertNoSrcInAbsoluteImport(requirePath.value)
+          ) {
             context.report({
               node,
               message: `Require "${requirePath.value}" should not include "/src" in the path.`,
               fix(fixer) {
-                const fixedPath = requirePath.value.replace(/\/src(?=\/|$)/, "");
-                return fixer.replaceText(requirePath, `'${fixedPath}'`);
+                const fixedPath = requirePath.value.replace(
+                  /\/src(?=\/|$)/,
+                  "",
+                );
+                return fixer.replaceText(
+                  requirePath,
+                  `'${fixedPath}'`,
+                );
               },
             });
             return;
           }
 
-          const failPackage = assertNoRelativeImportPath(requirePath.value);
+          const failPackage = assertNoRelativeImportPath(
+            requirePath.value,
+          );
           if (failPackage) {
             context.report({
               node,
@@ -183,15 +217,25 @@ export default {
                 if (packageName) {
                   // Create the absolute import path
                   // Remove /src/ directory and file extensions
-                  let absolutePath = requirePath.value.replace(
-                    /(?:\.\.\/)+.*?\//,
-                    `@org/${packageName}/`,
-                  );
+                  let absolutePath =
+                    requirePath.value.replace(
+                      /(?:\.\.\/)+.*?\//,
+                      `@org/${packageName}/`,
+                    );
                   // Remove /src/ directory if present
-                  absolutePath = absolutePath.replace(/\/src\//, "/");
+                  absolutePath = absolutePath.replace(
+                    /\/src\//,
+                    "/",
+                  );
                   // Remove file extension
-                  absolutePath = absolutePath.replace(/\.(js|jsx|ts|tsx)$/, "");
-                  return fixer.replaceText(requirePath, `'${absolutePath}'`);
+                  absolutePath = absolutePath.replace(
+                    /\.(js|jsx|ts|tsx)$/,
+                    "",
+                  );
+                  return fixer.replaceText(
+                    requirePath,
+                    `'${absolutePath}'`,
+                  );
                 }
                 return null;
               },

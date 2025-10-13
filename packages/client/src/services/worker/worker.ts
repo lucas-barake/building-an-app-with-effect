@@ -22,7 +22,9 @@ const Live = WorkerRpc.toLayer(
     return {
       calculatePrimes: ({ upperBound }) =>
         Effect.gen(function* () {
-          yield* Effect.logInfo(`Worker received request to calculate primes up to ${upperBound}`);
+          yield* Effect.logInfo(
+            `Worker received request to calculate primes up to ${upperBound}`,
+          );
 
           let count = 0;
           for (let i = 2; i <= upperBound; i++) {
@@ -31,7 +33,9 @@ const Live = WorkerRpc.toLayer(
             }
           }
 
-          yield* Effect.logInfo(`Worker finished calculating primes. Found ${count} primes.`);
+          yield* Effect.logInfo(
+            `Worker finished calculating primes. Found ${count} primes.`,
+          );
           return count;
         }),
     };
@@ -46,6 +50,8 @@ const RpcWorkerServer = RpcServer.layer(WorkerRpc).pipe(
 
 BrowserRuntime.runMain(
   BrowserWorkerRunner.launch(RpcWorkerServer).pipe(
-    Effect.tapErrorCause((error) => Effect.logError("[Worker]", error)),
+    Effect.tapErrorCause((error) =>
+      Effect.logError("[Worker]", error),
+    ),
   ),
 );

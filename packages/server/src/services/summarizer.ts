@@ -3,21 +3,33 @@ import * as Effect from "effect/Effect";
 import * as Stream from "effect/Stream";
 import { AiExecPlan, AiLive } from "./ai-live.js";
 
-export class Summarizer extends Effect.Service<Summarizer>()("@org/Summarizer", {
-  dependencies: [AiLive],
-  effect: Effect.gen(function* () {
-    const execPlan = yield* AiExecPlan.withRequirements;
+export class Summarizer extends Effect.Service<Summarizer>()(
+  "@org/Summarizer",
+  {
+    dependencies: [AiLive],
+    effect: Effect.gen(function* () {
+      const execPlan = yield* AiExecPlan.withRequirements;
 
-    return {
-      summarize: (query: string, markdownContents: ReadonlyArray<string>) =>
-        AiLanguageModel.streamText({
-          prompt: makePrompt(query, markdownContents),
-        }).pipe(Stream.withExecutionPlan(execPlan), Stream.orDie),
-    } as const;
-  }),
-}) {}
+      return {
+        summarize: (
+          query: string,
+          markdownContents: ReadonlyArray<string>,
+        ) =>
+          AiLanguageModel.streamText({
+            prompt: makePrompt(query, markdownContents),
+          }).pipe(
+            Stream.withExecutionPlan(execPlan),
+            Stream.orDie,
+          ),
+      } as const;
+    }),
+  },
+) {}
 
-const makePrompt = (query: string, markdownContents: ReadonlyArray<string>) => `
+const makePrompt = (
+  query: string,
+  markdownContents: ReadonlyArray<string>,
+) => `
 You are an AI research assistant that creates comprehensive summaries from multiple web sources.
 
 ## User Query: "${query}"

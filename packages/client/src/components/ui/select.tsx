@@ -14,7 +14,10 @@ type SelectProps = {
   loading?: boolean;
 } & HeadlessSelectProps;
 
-const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+const Select = React.forwardRef<
+  HTMLSelectElement,
+  SelectProps
+>(
   (
     {
       children,
@@ -34,7 +37,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const isPlaceholderSelected =
       !loading &&
       hasPlaceholder &&
-      (controlledValue === "" || controlledValue === undefined) &&
+      (controlledValue === "" ||
+        controlledValue === undefined) &&
       (defaultValue === "" || defaultValue === undefined);
 
     return (
@@ -49,8 +53,11 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             invalid
               ? "border-destructive ring-destructive/20 data-[focus]:border-destructive"
               : "data-[focus]:border-ring data-[focus]:ring-[3px] data-[focus]:ring-ring/50",
-            (disabled || loading) && "cursor-not-allowed opacity-50",
-            isPlaceholderSelected && !disabled && "text-muted-foreground",
+            (disabled || loading) &&
+              "cursor-not-allowed opacity-50",
+            isPlaceholderSelected &&
+              !disabled &&
+              "text-muted-foreground",
             className,
           )}
           invalid={invalid}

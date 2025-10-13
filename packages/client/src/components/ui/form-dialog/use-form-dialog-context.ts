@@ -8,12 +8,15 @@ type FormDialogContextValue = {
   unregisterFormApi: () => void;
 };
 
-export const FormDialogContext = React.createContext<FormDialogContextValue | null>(null);
+export const FormDialogContext =
+  React.createContext<FormDialogContextValue | null>(null);
 
 const useFormDialogContext = () => {
   const context = React.useContext(FormDialogContext);
   if (context === null) {
-    throw new Error("Form dialog hook must be used within a FormDialog");
+    throw new Error(
+      "Form dialog hook must be used within a FormDialog",
+    );
   }
   return context;
 };

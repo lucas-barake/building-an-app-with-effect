@@ -20,18 +20,24 @@ import * as internal from "./internal/manual-cache.js";
  * @since 1.0.0
  * @category models
  */
-export interface ManualCache<in out Key, in out Value> extends ManualCache.Variance<Key, Value> {
+export interface ManualCache<in out Key, in out Value>
+  extends ManualCache.Variance<Key, Value> {
   /**
    * Retrieves the value associated with the specified key if it exists and is not expired.
    * Otherwise returns Option.none. Updates LRU status on hit.
    */
-  readonly get: (key: Key) => Effect.Effect<Option.Option<Value>>;
+  readonly get: (
+    key: Key,
+  ) => Effect.Effect<Option.Option<Value>>;
 
   /**
    * Associates the specified value with the specified key in the cache. Resets TTL.
    * Updates LRU status. May evict LRU entry if capacity is exceeded.
    */
-  readonly set: (key: Key, value: Value) => Effect.Effect<void>;
+  readonly set: (
+    key: Key,
+    value: Value,
+  ) => Effect.Effect<void>;
 
   /**
    * Returns whether a non-expired value associated with the specified key exists in the cache.
@@ -131,7 +137,11 @@ export interface EntryStats {
 export const make = <Key, Value = never>(options: {
   readonly capacity: number;
   readonly timeToLive: Duration.DurationInput;
-}): Effect.Effect<ManualCache<Key, Value>, never, Scope.Scope> => internal.make(options);
+}): Effect.Effect<
+  ManualCache<Key, Value>,
+  never,
+  Scope.Scope
+> => internal.make(options);
 
 /**
  * Returns an effect that caches its **successful** result with stale-while-revalidate behavior.
@@ -154,14 +164,18 @@ export const make = <Key, Value = never>(options: {
 export const cacheSuccessSWR = <A, E, R>(
   self: Effect.Effect<A, E, R>,
   timeToLiveInput: Duration.DurationInput,
-): Effect.Effect<Effect.Effect<A, E, R>, never, Scope.Scope> =>
+): Effect.Effect<
+  Effect.Effect<A, E, R>,
+  never,
+  Scope.Scope
+> =>
   Effect.gen(function* () {
     const scope = yield* Scope.Scope;
     const timeToLive = Duration.decode(timeToLiveInput);
 
-    const cache = yield* Ref.make<Option.Option<readonly [expiry: number, value: A]>>(
-      Option.none(),
-    );
+    const cache = yield* Ref.make<
+      Option.Option<readonly [expiry: number, value: A]>
+    >(Option.none());
     const sem = yield* Effect.makeSemaphore(1);
 
     const protectedComputation = Effect.gen(function* () {
@@ -175,7 +189,13 @@ export const cacheSuccessSWR = <A, E, R>(
       }
 
       const result = yield* self;
-      yield* Ref.set(cache, Option.some([now + Duration.toMillis(timeToLive), result] as const));
+      yield* Ref.set(
+        cache,
+        Option.some([
+          now + Duration.toMillis(timeToLive),
+          result,
+        ] as const),
+      );
       return result;
     }).pipe(sem.withPermits(1));
 

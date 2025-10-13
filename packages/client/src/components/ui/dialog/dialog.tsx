@@ -1,30 +1,62 @@
 import { cn } from "@/lib/utils/cn";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { cva, type VariantProps } from "class-variance-authority";
+import {
+  cva,
+  type VariantProps,
+} from "class-variance-authority";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "../button";
 
-const DialogRoot = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+const DialogRoot = ({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root>) => {
+  return (
+    <DialogPrimitive.Root data-slot="dialog" {...props} />
+  );
 };
 
-const DialogTrigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+const DialogTrigger = ({
+  ...props
+}: React.ComponentProps<
+  typeof DialogPrimitive.Trigger
+>) => {
+  return (
+    <DialogPrimitive.Trigger
+      data-slot="dialog-trigger"
+      {...props}
+    />
+  );
 };
 
-const DialogPortal = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+const DialogPortal = ({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
+  return (
+    <DialogPrimitive.Portal
+      data-slot="dialog-portal"
+      {...props}
+    />
+  );
 };
 
-const DialogClose = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) => {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+const DialogClose = ({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Close>) => {
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      {...props}
+    />
+  );
 };
 
 const DialogOverlay = ({
   className,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) => {
+}: React.ComponentProps<
+  typeof DialogPrimitive.Overlay
+>) => {
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
@@ -75,7 +107,13 @@ const DialogContent = ({
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
-        className={cn(dialogContentVariants({ size, variant, className }))}
+        className={cn(
+          dialogContentVariants({
+            size,
+            variant,
+            className,
+          }),
+        )}
         {...props}
       >
         {children}
@@ -88,21 +126,33 @@ const DialogContent = ({
   );
 };
 
-const DialogHeader = ({ className, ...props }: React.ComponentProps<"div">) => {
+const DialogHeader = ({
+  className,
+  ...props
+}: React.ComponentProps<"div">) => {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn(
+        "flex flex-col gap-2 text-center sm:text-left",
+        className,
+      )}
       {...props}
     />
   );
 };
 
-const DialogFooter = ({ className, ...props }: React.ComponentProps<"div">) => {
+const DialogFooter = ({
+  className,
+  ...props
+}: React.ComponentProps<"div">) => {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       {...props}
     />
   );
@@ -115,7 +165,10 @@ const DialogTitle = ({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
+      className={cn(
+        "text-lg leading-none font-semibold",
+        className,
+      )}
       {...props}
     />
   );
@@ -124,7 +177,9 @@ const DialogTitle = ({
 const DialogDescription = ({
   className,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) => {
+}: React.ComponentProps<
+  typeof DialogPrimitive.Description
+>) => {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
@@ -135,7 +190,10 @@ const DialogDescription = ({
 };
 
 const CancelButton = (
-  props: Omit<React.ComponentProps<typeof Button>, "children" | "variant"> & {
+  props: Omit<
+    React.ComponentProps<typeof Button>,
+    "children" | "variant"
+  > & {
     children?: React.ReactNode;
   },
 ) => {

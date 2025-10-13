@@ -13,7 +13,9 @@ import { MountableDialog } from "./mountable-dialog";
  * @param {React.ComponentType<P>} Component The dialog component to wrap.
  * @returns A new component with controlled mounting and unmounting.
  */
-export const withMountableDialog = <P extends { open: boolean }>(
+export const withMountableDialog = <
+  P extends { open: boolean },
+>(
   Component: React.ComponentType<P>,
 ) => {
   const WithMountable = (props: P) => {

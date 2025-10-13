@@ -9,7 +9,9 @@ import { type LazyArg, dual } from "effect/Function";
 export const pre: {
   <B, E2, R2>(
     prerequisite: Effect.Effect<B, E2, R2>,
-  ): <A, E, R>(self: Effect.Effect<A, E, R>) => Effect.Effect<A, E | E2, R | R2>;
+  ): <A, E, R>(
+    self: Effect.Effect<A, E, R>,
+  ) => Effect.Effect<A, E | E2, R | R2>;
   <A, E, R, B, E2, R2>(
     self: Effect.Effect<A, E, R>,
     prerequisite: Effect.Effect<B, E2, R2>,
@@ -19,7 +21,8 @@ export const pre: {
   <A, E, R, B, E2, R2>(
     self: Effect.Effect<A, E, R>,
     prerequisite: Effect.Effect<B, E2, R2>,
-  ): Effect.Effect<A, E | E2, R | R2> => Effect.zipRight(prerequisite, self),
+  ): Effect.Effect<A, E | E2, R | R2> =>
+    Effect.zipRight(prerequisite, self),
 );
 
 /**
@@ -31,7 +34,9 @@ export const whenOrFail: {
   <A, E, R, E2>(
     condition: LazyArg<boolean>,
     orFailWith: LazyArg<E2>,
-  ): (self: Effect.Effect<A, E, R>) => Effect.Effect<A, E | E2, R>;
+  ): (
+    self: Effect.Effect<A, E, R>,
+  ) => Effect.Effect<A, E | E2, R>;
   <A, E, R, E2>(
     self: Effect.Effect<A, E, R>,
     condition: LazyArg<boolean>,
@@ -46,7 +51,9 @@ export const whenOrFail: {
   ): Effect.Effect<A, E | E2, R> =>
     // @ts-expect-error - Effect.fail returns Effect<never, E2> and TypeScript tries to unify the success types (A | never).
     // At runtime, Effect.fail short-circuits execution, so the success type is actually just A when the condition is true.
-    Effect.flatMap(Effect.sync(condition), (bool) => (bool ? self : Effect.fail(orFailWith()))),
+    Effect.flatMap(Effect.sync(condition), (bool) =>
+      bool ? self : Effect.fail(orFailWith()),
+    ),
 );
 
 /**
@@ -58,7 +65,9 @@ export const whenEffectOrFail: {
   <E2, R2, E3>(
     condition: Effect.Effect<boolean, E2, R2>,
     orFailWith: LazyArg<E3>,
-  ): <A, E, R>(self: Effect.Effect<A, E, R>) => Effect.Effect<A, E | E2 | E3, R | R2>;
+  ): <A, E, R>(
+    self: Effect.Effect<A, E, R>,
+  ) => Effect.Effect<A, E | E2 | E3, R | R2>;
   <A, E, R, E2, R2, E3>(
     self: Effect.Effect<A, E, R>,
     condition: Effect.Effect<boolean, E2, R2>,
@@ -73,5 +82,7 @@ export const whenEffectOrFail: {
   ): Effect.Effect<A, E | E2 | E3, R | R2> =>
     // @ts-expect-error - Effect.fail returns Effect<never, E3> and TypeScript tries to unify the success types (A | never).
     // At runtime, Effect.fail short-circuits execution, so the success type is actually just A when the condition is true.
-    Effect.flatMap(condition, (bool) => (bool ? self : Effect.fail(orFailWith()))),
+    Effect.flatMap(condition, (bool) =>
+      bool ? self : Effect.fail(orFailWith()),
+    ),
 );

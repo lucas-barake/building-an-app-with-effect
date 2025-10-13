@@ -6,7 +6,9 @@ import { Label } from "./label";
 import { Select, type SelectProps } from "./select";
 import { Textarea } from "./textarea";
 
-const FormControl: React.FC<React.ComponentProps<"div">> = ({ children, ...props }) => {
+const FormControl: React.FC<
+  React.ComponentProps<"div">
+> = ({ children, ...props }) => {
   return (
     <div className="flex flex-col gap-1.5" {...props}>
       {children}
@@ -23,7 +25,13 @@ const FieldError: React.FC<
   if (error === null || String.isEmpty(error)) return null;
 
   return (
-    <span className={cn("text-sm text-red-500 dark:text-red-400", className)} {...props}>
+    <span
+      className={cn(
+        "text-sm text-red-500 dark:text-red-400",
+        className,
+      )}
+      {...props}
+    >
       {error}
     </span>
   );
@@ -35,13 +43,22 @@ const FieldDescription: React.FC<
   }
 > = ({ className, description, ...props }) => {
   return (
-    <p className={cn("text-sm text-muted-foreground", className)} {...props}>
+    <p
+      className={cn(
+        "text-sm text-muted-foreground",
+        className,
+      )}
+      {...props}
+    >
       {description}
     </p>
   );
 };
 
-type FieldInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "id"> & {
+type FieldInputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "id"
+> & {
   label: React.ReactNode;
   name: string;
   error?: string | null | undefined;
@@ -63,21 +80,34 @@ export const FieldInput: React.FC<FieldInputProps> = ({
       <Label htmlFor={name} required={required === true}>
         {label}
       </Label>
-      {description && <FieldDescription description={description} />}
-      <Input id={name} name={name} required={required} className={className} {...inputProps} />
+      {description && (
+        <FieldDescription description={description} />
+      )}
+      <Input
+        id={name}
+        name={name}
+        required={required}
+        className={className}
+        {...inputProps}
+      />
       <FieldError error={error} />
     </FormControl>
   );
 };
 
-type FieldTextareaProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "id"> & {
+type FieldTextareaProps = Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "id"
+> & {
   label: React.ReactNode;
   name: string;
   error?: string | null | undefined;
   controlClassName?: string;
   ref?: React.Ref<HTMLTextAreaElement>;
 };
-export const FieldTextarea: React.FC<FieldTextareaProps> = ({
+export const FieldTextarea: React.FC<
+  FieldTextareaProps
+> = ({
   className,
   controlClassName,
   error,
@@ -108,7 +138,10 @@ type FieldSelectOption = {
   value: string | number;
 };
 
-type FieldSelectProps = Omit<SelectProps, "children" | "id" | "placeholder"> & {
+type FieldSelectProps = Omit<
+  SelectProps,
+  "children" | "id" | "placeholder"
+> & {
   label: React.ReactNode;
   name: string;
   error?: string | null | undefined;
@@ -139,7 +172,8 @@ const FieldSelect: React.FC<FieldSelectProps> = ({
   finalOptions.push(...userOptions);
 
   const hasUserOptions = userOptions.length > 0;
-  const showNoOptionsMessageAndDisable = !loading && !hasUserOptions && Boolean(noOptionsText);
+  const showNoOptionsMessageAndDisable =
+    !loading && !hasUserOptions && Boolean(noOptionsText);
 
   return (
     <FormControl className={controlClassName}>
@@ -152,7 +186,11 @@ const FieldSelect: React.FC<FieldSelectProps> = ({
         name={name}
         required={required}
         loading={loading}
-        disabled={disabled || loading || showNoOptionsMessageAndDisable}
+        disabled={
+          disabled ||
+          loading ||
+          showNoOptionsMessageAndDisable
+        }
         {...restSelectProps}
       >
         {!hasUserOptions && noOptionsText !== undefined ? (
@@ -172,7 +210,9 @@ const FieldSelect: React.FC<FieldSelectProps> = ({
   );
 };
 
-export const Form: React.FC<React.ComponentProps<"form">> & {
+export const Form: React.FC<
+  React.ComponentProps<"form">
+> & {
   Input: typeof Input;
   Select: typeof Select;
   Control: typeof FormControl;

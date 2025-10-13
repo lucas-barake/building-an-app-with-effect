@@ -24,7 +24,11 @@ export type PaginationResult<T> = {
  */
 export const PaginationSchema = <A, I, R>(
   itemSchema: Schema.Schema<A, I, R>,
-): Schema.Schema<PaginationResult<A>, PaginationResult<I>, R> =>
+): Schema.Schema<
+  PaginationResult<A>,
+  PaginationResult<I>,
+  R
+> =>
   Schema.Struct({
     data: Schema.Array(itemSchema),
     total: Schema.Number,
@@ -36,14 +40,20 @@ export const PaginationSchema = <A, I, R>(
 export const DEFAULT_PAGINATION_LIMIT = 100;
 export const DEFAULT_PAGINATION_OFFSET = 0;
 
-export class PaginationQuery extends Schema.Class<PaginationQuery>("PaginationQuery")({
-  limit: Schema.optional(Schema.Int.pipe(Schema.lessThanOrEqualTo(200))).pipe(
+export class PaginationQuery extends Schema.Class<PaginationQuery>(
+  "PaginationQuery",
+)({
+  limit: Schema.optional(
+    Schema.Int.pipe(Schema.lessThanOrEqualTo(200)),
+  ).pipe(
     Schema.withDefaults({
       constructor: () => DEFAULT_PAGINATION_LIMIT,
       decoding: () => DEFAULT_PAGINATION_LIMIT,
     }),
   ),
-  offset: Schema.optional(Schema.Int.pipe(Schema.nonNegative())).pipe(
+  offset: Schema.optional(
+    Schema.Int.pipe(Schema.nonNegative()),
+  ).pipe(
     Schema.withDefaults({
       constructor: () => DEFAULT_PAGINATION_OFFSET,
       decoding: () => DEFAULT_PAGINATION_OFFSET,

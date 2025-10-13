@@ -13,7 +13,11 @@ import { createServer } from "node:http";
 import { RpcDefLive } from "./rpc-def-live.js";
 
 const HealthRouter = HttpLayerRouter.use((router) =>
-  router.add("GET", "/health", HttpServerResponse.text("OK")),
+  router.add(
+    "GET",
+    "/health",
+    HttpServerResponse.text("OK"),
+  ),
 );
 
 const RpcRouter = RpcServer.layerHttpRouter({
@@ -21,14 +25,31 @@ const RpcRouter = RpcServer.layerHttpRouter({
   path: "/rpc",
   protocol: "http",
   spanPrefix: "rpc",
-}).pipe(Layer.provide(RpcDefLive), Layer.provide(RpcSerialization.layerNdjson));
+}).pipe(
+  Layer.provide(RpcDefLive),
+  Layer.provide(RpcSerialization.layerNdjson),
+);
 
-const AllRoutes = Layer.mergeAll(HealthRouter, RpcRouter).pipe(
+const AllRoutes = Layer.mergeAll(
+  HealthRouter,
+  RpcRouter,
+).pipe(
   Layer.provide(
     HttpLayerRouter.cors({
       allowedOrigins: ["*"],
-      allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-      allowedHeaders: ["Content-Type", "Authorization", "B3", "traceparent"],
+      allowedMethods: [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+      ],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "B3",
+        "traceparent",
+      ],
       credentials: true,
     }),
   ),
@@ -43,9 +64,13 @@ const TracerLive = OtlpTracer.layer({
 
 const HttpLive = HttpLayerRouter.serve(AllRoutes).pipe(
   HttpMiddleware.withTracerDisabledWhen(
-    (request) => request.url === "/health" || request.method === "OPTIONS",
+    (request) =>
+      request.url === "/health" ||
+      request.method === "OPTIONS",
   ),
-  Layer.provide(NodeHttpServer.layer(createServer, { port: 3000 })),
+  Layer.provide(
+    NodeHttpServer.layer(createServer, { port: 3000 }),
+  ),
   Layer.provide(TracerLive),
 );
 

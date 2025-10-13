@@ -59,16 +59,19 @@ export const PgLive = Layer.unwrapEffect(
 ).pipe((self) =>
   Layer.retry(
     self,
-    Schedule.identity<Layer.Layer.Error<typeof self>>().pipe(
+    Schedule.identity<
+      Layer.Layer.Error<typeof self>
+    >().pipe(
       Schedule.check((input) => input._tag === "SqlError"),
       Schedule.intersect(Schedule.exponential("1 second")),
       Schedule.intersect(Schedule.recurs(2)),
-      Schedule.onDecision(([[_error, duration], attempt], decision) =>
-        decision._tag === "Continue"
-          ? Effect.logInfo(
-              `Retrying database connection in ${Duration.format(duration)} (attempt #${++attempt})`,
-            )
-          : Effect.void,
+      Schedule.onDecision(
+        ([[_error, duration], attempt], decision) =>
+          decision._tag === "Continue"
+            ? Effect.logInfo(
+                `Retrying database connection in ${Duration.format(duration)} (attempt #${++attempt})`,
+              )
+            : Effect.void,
       ),
     ),
   ),

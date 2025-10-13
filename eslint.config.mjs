@@ -29,7 +29,11 @@ export default [
       parser: tsParser,
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["*.js", "*.mjs", "eslint.config.mjs"],
+          allowDefaultProject: [
+            "*.js",
+            "*.mjs",
+            "eslint.config.mjs",
+          ],
         },
         tsconfigRootDir: process.cwd(),
       },
@@ -38,7 +42,8 @@ export default [
       "@typescript-eslint": tsPlugin,
       "no-relative-import-outside-package": {
         rules: {
-          "no-relative-import-outside-package": noRelativeImportOutsidePackage,
+          "no-relative-import-outside-package":
+            noRelativeImportOutsidePackage,
         },
       },
       "enforce-react-namespace": {
@@ -68,8 +73,10 @@ export default [
           },
         },
       ],
-      "@typescript-eslint/prefer-nullish-coalescing": "warn",
-      "@typescript-eslint/no-unnecessary-condition": "error",
+      "@typescript-eslint/prefer-nullish-coalescing":
+        "warn",
+      "@typescript-eslint/no-unnecessary-condition":
+        "error",
       "@typescript-eslint/strict-boolean-expressions": [
         "warn",
         {
@@ -84,13 +91,17 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false,
         },
       ],
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
+      "@typescript-eslint/no-unnecessary-type-assertion":
+        "error",
       "@typescript-eslint/no-explicit-any": "warn",
 
       // Custom import rules
-      "no-relative-import-outside-package/no-relative-import-outside-package": "error",
-      "enforce-react-namespace/enforce-react-namespace": "error",
-      "no-deep-relative-imports/no-deep-relative-imports": "error",
+      "no-relative-import-outside-package/no-relative-import-outside-package":
+        "error",
+      "enforce-react-namespace/enforce-react-namespace":
+        "error",
+      "no-deep-relative-imports/no-deep-relative-imports":
+        "error",
     },
   },
 ];

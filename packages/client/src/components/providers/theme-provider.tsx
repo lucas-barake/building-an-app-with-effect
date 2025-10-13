@@ -26,7 +26,8 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 };
 
-const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
+const ThemeProviderContext =
+  React.createContext<ThemeProviderState>(initialState);
 
 export const ThemeProvider = ({
   children,
@@ -35,7 +36,9 @@ export const ThemeProvider = ({
   ...props
 }: ThemeProviderProps) => {
   const [theme, setTheme] = React.useState<Theme>(() =>
-    Option.fromNullable(localStorage.getItem(storageKey)).pipe(
+    Option.fromNullable(
+      localStorage.getItem(storageKey),
+    ).pipe(
       Option.flatMap(Schema.decodeUnknownOption(Theme)),
       Option.getOrElse(() => defaultTheme),
     ),
@@ -43,7 +46,11 @@ export const ThemeProvider = ({
 
   const actualTheme = React.useMemo<ActualTheme>(() => {
     if (theme === "system") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      return window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches
+        ? "dark"
+        : "light";
     }
     return theme;
   }, [theme]);
@@ -74,7 +81,10 @@ export const useTheme = () => {
   const context = React.useContext(ThemeProviderContext);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+  if (context === undefined)
+    throw new Error(
+      "useTheme must be used within a ThemeProvider",
+    );
 
   return context;
 };

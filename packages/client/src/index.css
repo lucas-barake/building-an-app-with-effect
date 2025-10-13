@@ -141,7 +141,9 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-foreground: var(
+    --destructive-foreground
+  );
   --color-destructive-text: var(--destructive-text);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
@@ -239,7 +241,8 @@
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-color: var(--scrollbar-thumb)
+      var(--scrollbar-track);
   }
 
   /* Chrome, Edge, Safari */

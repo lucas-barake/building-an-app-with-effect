@@ -1,7 +1,11 @@
 import * as React from "react";
 
-const useDelayedUnmount = (isMounted: boolean, delay: number) => {
-  const [shouldRender, setShouldRender] = React.useState(isMounted);
+const useDelayedUnmount = (
+  isMounted: boolean,
+  delay: number,
+) => {
+  const [shouldRender, setShouldRender] =
+    React.useState(isMounted);
 
   React.useEffect(() => {
     if (isMounted) {
@@ -25,7 +29,11 @@ type Props = {
   delay?: number;
 };
 
-export const MountableDialog: React.FC<Props> = ({ children, delay = 200, open }) => {
+export const MountableDialog: React.FC<Props> = ({
+  children,
+  delay = 200,
+  open,
+}) => {
   const shouldRender = useDelayedUnmount(open, delay);
   return shouldRender ? children : null;
 };

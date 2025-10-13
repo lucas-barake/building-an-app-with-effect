@@ -12,5 +12,8 @@
       "@org/database/*": ["../database/src/*.js"]
     }
   },
-  "references": [{ "path": "tsconfig.src.json" }, { "path": "tsconfig.test.json" }]
+  "references": [
+    { "path": "tsconfig.src.json" },
+    { "path": "tsconfig.test.json" }
+  ]
 }

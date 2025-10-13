@@ -12,7 +12,10 @@ void Effect.gen(function* () {
 
   const getTypes = SqlSchema.findAll({
     Request: Schema.Void,
-    Result: Schema.Struct({ typname: Schema.String, schemaname: Schema.String }),
+    Result: Schema.Struct({
+      typname: Schema.String,
+      schemaname: Schema.String,
+    }),
     execute: () => sql`
       SELECT
         t.typname,
@@ -28,7 +31,10 @@ void Effect.gen(function* () {
 
   const getTables = SqlSchema.findAll({
     Request: Schema.Void,
-    Result: Schema.Struct({ tableName: Schema.String, schemaName: Schema.String }),
+    Result: Schema.Struct({
+      tableName: Schema.String,
+      schemaName: Schema.String,
+    }),
     execute: () => sql`
       SELECT
         table_name,
@@ -46,12 +52,18 @@ void Effect.gen(function* () {
 
   yield* sql.withTransaction(
     Effect.gen(function* () {
-      console.log(`🗑️ Starting database reset for schemas: ${schemaList.join(", ")}`);
+      console.log(
+        `🗑️ Starting database reset for schemas: ${schemaList.join(", ")}`,
+      );
 
       if (types.length > 0) {
         console.log(`Dropping ${types.length} types`);
         for (const type of types) {
-          yield* sql`DROP TYPE IF EXISTS ${sql(type.schemaname)}.${sql(type.typname)} CASCADE`;
+          yield* sql`
+            DROP TYPE IF EXISTS ${sql(
+              type.schemaname,
+            )}.${sql(type.typname)} CASCADE
+          `;
         }
         console.log(`✅ Dropped ${types.length} types`);
       } else {
@@ -61,7 +73,11 @@ void Effect.gen(function* () {
       if (tables.length > 0) {
         console.log(`Dropping ${tables.length} tables`);
         for (const table of tables) {
-          yield* sql`DROP TABLE IF EXISTS ${sql(table.schemaName)}.${sql(table.tableName)} CASCADE`;
+          yield* sql`
+            DROP TABLE IF EXISTS ${sql(
+              table.schemaName,
+            )}.${sql(table.tableName)} CASCADE
+          `;
         }
         console.log(`✅ Dropped ${tables.length} tables`);
       } else {

@@ -11,13 +11,16 @@ import * as Schema from "effect/Schema";
 import { randomUUID } from "node:crypto";
 
 export const SearchItem = Schema.Struct({
-  id: Schema.optional(Schema.UUID).pipe(Schema.withDecodingDefault(() => randomUUID())),
+  id: Schema.optional(Schema.UUID).pipe(
+    Schema.withDecodingDefault(() => randomUUID()),
+  ),
   url: Schema.URL,
   title: Schema.String,
   description: Schema.String,
   position: Schema.Number.pipe(
     Schema.annotations({
-      description: "The position of the result in the search results",
+      description:
+        "The position of the result in the search results",
     }),
   ),
   markdown: Schema.String.pipe(
@@ -34,47 +37,59 @@ const SearchResult = Schema.Struct({
   }),
 });
 
-export class WebSearcher extends Effect.Service<WebSearcher>()("@org/WebSearcher", {
-  dependencies: [FetchHttpClient.layer],
-  scoped: Effect.gen(function* () {
-    const apiKey = yield* Config.redacted("FIRECRAWL_API_KEY");
+export class WebSearcher extends Effect.Service<WebSearcher>()(
+  "@org/WebSearcher",
+  {
+    dependencies: [FetchHttpClient.layer],
+    scoped: Effect.gen(function* () {
+      const apiKey = yield* Config.redacted(
+        "FIRECRAWL_API_KEY",
+      );
 
-    const rateLimiter = yield* RateLimiter.make({
-      limit: 10,
-      interval: "1 minute",
-    });
+      const rateLimiter = yield* RateLimiter.make({
+        limit: 10,
+        interval: "1 minute",
+      });
 
-    const httpClient = (yield* HttpClient.HttpClient).pipe(
-      HttpClient.transform((effect, _request) => rateLimiter(effect)),
-      HttpClient.mapRequest((req) =>
-        req.pipe(
-          HttpClientRequest.bearerToken(apiKey),
-          HttpClientRequest.prependUrl("https://api.firecrawl.dev/v2"),
-        ),
-      ),
-      HttpClient.filterStatusOk,
-      HttpClient.retryTransient({
-        schedule: Schedule.exponential("1 second", 2.5),
-        times: 3,
-      }),
-    );
-
-    return {
-      search: Effect.fn("WebSearcher.search")(
-        (query: string) =>
-          httpClient.post("/search", {
-            body: HttpBody.unsafeJson({
-              query,
-              limit: 3,
-              scrapeOptions: {
-                formats: ["markdown"],
-              },
-            }),
+      const httpClient =
+        (yield* HttpClient.HttpClient).pipe(
+          HttpClient.transform((effect, _request) =>
+            rateLimiter(effect),
+          ),
+          HttpClient.mapRequest((req) =>
+            req.pipe(
+              HttpClientRequest.bearerToken(apiKey),
+              HttpClientRequest.prependUrl(
+                "https://api.firecrawl.dev/v2",
+              ),
+            ),
+          ),
+          HttpClient.filterStatusOk,
+          HttpClient.retryTransient({
+            schedule: Schedule.exponential("1 second", 2.5),
+            times: 3,
           }),
-        Effect.flatMap(HttpClientResponse.schemaBodyJson(SearchResult)),
-        Effect.map((result) => result.data.web),
-        Effect.orDie,
-      ),
-    } as const;
-  }),
-}) {}
+        );
+
+      return {
+        search: Effect.fn("WebSearcher.search")(
+          (query: string) =>
+            httpClient.post("/search", {
+              body: HttpBody.unsafeJson({
+                query,
+                limit: 3,
+                scrapeOptions: {
+                  formats: ["markdown"],
+                },
+              }),
+            }),
+          Effect.flatMap(
+            HttpClientResponse.schemaBodyJson(SearchResult),
+          ),
+          Effect.map((result) => result.data.web),
+          Effect.orDie,
+        ),
+      } as const;
+    }),
+  },
+) {}

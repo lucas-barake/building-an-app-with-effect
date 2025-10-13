@@ -9,16 +9,28 @@ const TooltipProvider = TooltipPrimitive.Provider;
 const TooltipRoot = ({
   delayDuration = "300 millis",
   ...props
-}: Omit<React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>, "delayDuration"> & {
+}: Omit<
+  React.ComponentPropsWithoutRef<
+    typeof TooltipPrimitive.Root
+  >,
+  "delayDuration"
+> & {
   delayDuration?: DurationInput;
-}) => <TooltipPrimitive.Root {...props} delayDuration={Duration.toMillis(delayDuration)} />;
+}) => (
+  <TooltipPrimitive.Root
+    {...props}
+    delayDuration={Duration.toMillis(delayDuration)}
+  />
+);
 TooltipRoot.displayName = TooltipPrimitive.Root.displayName;
 
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
 const TooltipContent = React.forwardRef<
   React.ComponentRef<typeof TooltipPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+  React.ComponentPropsWithoutRef<
+    typeof TooltipPrimitive.Content
+  >
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <TooltipPrimitive.Content
     ref={ref}
@@ -30,14 +42,20 @@ const TooltipContent = React.forwardRef<
     {...props}
   />
 ));
-TooltipContent.displayName = TooltipPrimitive.Content.displayName;
+TooltipContent.displayName =
+  TooltipPrimitive.Content.displayName;
 
 type TooltipComponentType = {
   Trigger: typeof TooltipTrigger;
   Content: typeof TooltipContent;
-} & React.FC<React.ComponentPropsWithoutRef<typeof TooltipRoot>>;
+} & React.FC<
+  React.ComponentPropsWithoutRef<typeof TooltipRoot>
+>;
 
-export const Tooltip: TooltipComponentType = ({ children, ...props }) => (
+export const Tooltip: TooltipComponentType = ({
+  children,
+  ...props
+}) => (
   <TooltipProvider>
     <TooltipRoot {...props}>{children}</TooltipRoot>
   </TooltipProvider>

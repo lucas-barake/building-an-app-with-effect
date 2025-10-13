@@ -55,7 +55,9 @@
       "@org/server/test/*": ["./packages/server/test/*.js"],
       "@org/database": ["./packages/database/src/index.js"],
       "@org/database/*": ["./packages/database/src/*.js"],
-      "@org/database/test/*": ["./packages/database/test/*.js"]
+      "@org/database/test/*": [
+        "./packages/database/test/*.js"
+      ]
     }
   }
 }

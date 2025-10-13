@@ -13,7 +13,9 @@ import * as EString from "effect/String";
  * getNameInitials("Alice") // Returns "A"
  * getNameInitials(null) // Returns "?"
  */
-export const getNameInitials = (name: string | null | undefined): string => {
+export const getNameInitials = (
+  name: string | null | undefined,
+): string => {
   return pipe(
     name === "" ? null : name,
     Option.fromNullable,
@@ -93,12 +95,18 @@ export const stripMessageFormatting = flow(
  * interpolateTemplate("Hello {{unknown.var}}", {})
  * // Returns "Hello {{unknown.var}}"
  */
-export const interpolateTemplate = (template: string, data: Record<string, unknown>): string => {
-  return template.replace(/\{\{([^}]+)\}\}/g, (match, variablePath: string) => {
-    const trimmedPath = variablePath.trim();
-    const value = getNestedValue(data, trimmedPath);
-    return value !== undefined ? String(value) : match;
-  });
+export const interpolateTemplate = (
+  template: string,
+  data: Record<string, unknown>,
+): string => {
+  return template.replace(
+    /\{\{([^}]+)\}\}/g,
+    (match, variablePath: string) => {
+      const trimmedPath = variablePath.trim();
+      const value = getNestedValue(data, trimmedPath);
+      return value !== undefined ? String(value) : match;
+    },
+  );
 };
 
 /**
@@ -115,7 +123,10 @@ export const interpolateTemplate = (template: string, data: Record<string, unkno
  * getNestedValue(data, "items.[0].id") // Returns 1
  * getNestedValue(data, "nonexistent.path") // Returns undefined
  */
-export const getNestedValue = (obj: Record<string, unknown>, path: string): unknown => {
+export const getNestedValue = (
+  obj: Record<string, unknown>,
+  path: string,
+): unknown => {
   const parts = path.split(".");
   let current: unknown = obj;
 
@@ -123,12 +134,20 @@ export const getNestedValue = (obj: Record<string, unknown>, path: string): unkn
     // Handle array notation like [0], [1], etc.
     if (part.startsWith("[") && part.endsWith("]")) {
       const index = parseInt(part.slice(1, -1));
-      if (Array.isArray(current) && index >= 0 && index < current.length) {
+      if (
+        Array.isArray(current) &&
+        index >= 0 &&
+        index < current.length
+      ) {
         current = current[index];
       } else {
         return undefined;
       }
-    } else if (current && typeof current === "object" && part in current) {
+    } else if (
+      current &&
+      typeof current === "object" &&
+      part in current
+    ) {
       current = (current as Record<string, unknown>)[part];
     } else {
       return undefined;

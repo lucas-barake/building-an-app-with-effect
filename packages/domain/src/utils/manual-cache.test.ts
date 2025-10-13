@@ -7,19 +7,21 @@ import { strictEqual } from "node:assert";
 import * as Cache from "./manual-cache.js";
 
 describe("Cache", () => {
-  it.scoped("should handle basic set and get operations", () =>
-    Effect.gen(function* () {
-      const cache = yield* Cache.make<string, string>({
-        capacity: 100,
-        timeToLive: "1 hour",
-      });
+  it.scoped(
+    "should handle basic set and get operations",
+    () =>
+      Effect.gen(function* () {
+        const cache = yield* Cache.make<string, string>({
+          capacity: 100,
+          timeToLive: "1 hour",
+        });
 
-      yield* cache.set("key", "value");
-      const value = yield* cache.get("key");
+        yield* cache.set("key", "value");
+        const value = yield* cache.get("key");
 
-      strictEqual(value._tag, "Some");
-      strictEqual(value.value, "value");
-    }),
+        strictEqual(value._tag, "Some");
+        strictEqual(value.value, "value");
+      }),
   );
 
   it.scoped("should respect TTL and expire items", () =>
@@ -90,106 +92,148 @@ describe("Cache", () => {
   );
 
   describe("cacheSuccessSWR", () => {
-    it.scoped("should block and wait on initial cache miss", () =>
-      Effect.gen(function* () {
-        const executionCount = yield* Ref.make(0);
-        const underlyingEffect = Ref.updateAndGet(executionCount, (n) => n + 1).pipe(
-          Effect.delay("100 millis"),
-          Effect.map((count) => `Success ${count}`),
-        );
+    it.scoped(
+      "should block and wait on initial cache miss",
+      () =>
+        Effect.gen(function* () {
+          const executionCount = yield* Ref.make(0);
+          const underlyingEffect = Ref.updateAndGet(
+            executionCount,
+            (n) => n + 1,
+          ).pipe(
+            Effect.delay("100 millis"),
+            Effect.map((count) => `Success ${count}`),
+          );
 
-        const cachedEffect = yield* Cache.cacheSuccessSWR(underlyingEffect, "10 seconds");
+          const cachedEffect = yield* Cache.cacheSuccessSWR(
+            underlyingEffect,
+            "10 seconds",
+          );
 
-        const startTime = yield* TestClock.currentTimeMillis;
-        const fiber = yield* Effect.fork(cachedEffect);
-        yield* TestClock.adjust("100 millis");
-        const res1 = yield* Fiber.join(fiber);
-        const endTime = yield* TestClock.currentTimeMillis;
+          const startTime =
+            yield* TestClock.currentTimeMillis;
+          const fiber = yield* Effect.fork(cachedEffect);
+          yield* TestClock.adjust("100 millis");
+          const res1 = yield* Fiber.join(fiber);
+          const endTime =
+            yield* TestClock.currentTimeMillis;
 
-        strictEqual(res1, "Success 1");
-        expect(endTime - startTime).toBeGreaterThanOrEqual(100);
-      }),
+          strictEqual(res1, "Success 1");
+          expect(
+            endTime - startTime,
+          ).toBeGreaterThanOrEqual(100);
+        }),
     );
 
-    it.scoped("should return cached value immediately when not expired", () =>
-      Effect.gen(function* () {
-        const executionCount = yield* Ref.make(0);
-        const underlyingEffect = Ref.updateAndGet(executionCount, (n) => n + 1).pipe(
-          Effect.delay("100 millis"),
-          Effect.map((count) => `Success ${count}`),
-        );
+    it.scoped(
+      "should return cached value immediately when not expired",
+      () =>
+        Effect.gen(function* () {
+          const executionCount = yield* Ref.make(0);
+          const underlyingEffect = Ref.updateAndGet(
+            executionCount,
+            (n) => n + 1,
+          ).pipe(
+            Effect.delay("100 millis"),
+            Effect.map((count) => `Success ${count}`),
+          );
 
-        const cachedEffect = yield* Cache.cacheSuccessSWR(underlyingEffect, "10 seconds");
+          const cachedEffect = yield* Cache.cacheSuccessSWR(
+            underlyingEffect,
+            "10 seconds",
+          );
 
-        const fiber1 = yield* Effect.fork(cachedEffect);
-        yield* TestClock.adjust("100 millis");
-        yield* Fiber.join(fiber1);
+          const fiber1 = yield* Effect.fork(cachedEffect);
+          yield* TestClock.adjust("100 millis");
+          yield* Fiber.join(fiber1);
 
-        const startTime = yield* TestClock.currentTimeMillis;
-        const res2 = yield* cachedEffect;
-        const endTime = yield* TestClock.currentTimeMillis;
+          const startTime =
+            yield* TestClock.currentTimeMillis;
+          const res2 = yield* cachedEffect;
+          const endTime =
+            yield* TestClock.currentTimeMillis;
 
-        strictEqual(res2, "Success 1");
-        strictEqual(endTime - startTime, 0);
-      }),
+          strictEqual(res2, "Success 1");
+          strictEqual(endTime - startTime, 0);
+        }),
     );
 
-    it.scoped("should return stale value immediately and refresh in background when expired", () =>
-      Effect.gen(function* () {
-        const executionCount = yield* Ref.make(0);
-        const underlyingEffect = Ref.updateAndGet(executionCount, (n) => n + 1).pipe(
-          Effect.delay("100 millis"),
-          Effect.map((count) => `Success ${count}`),
-        );
+    it.scoped(
+      "should return stale value immediately and refresh in background when expired",
+      () =>
+        Effect.gen(function* () {
+          const executionCount = yield* Ref.make(0);
+          const underlyingEffect = Ref.updateAndGet(
+            executionCount,
+            (n) => n + 1,
+          ).pipe(
+            Effect.delay("100 millis"),
+            Effect.map((count) => `Success ${count}`),
+          );
 
-        const cachedEffect = yield* Cache.cacheSuccessSWR(underlyingEffect, "5 seconds");
+          const cachedEffect = yield* Cache.cacheSuccessSWR(
+            underlyingEffect,
+            "5 seconds",
+          );
 
-        const fiber1 = yield* Effect.fork(cachedEffect);
-        yield* TestClock.adjust("100 millis");
-        yield* Fiber.join(fiber1);
+          const fiber1 = yield* Effect.fork(cachedEffect);
+          yield* TestClock.adjust("100 millis");
+          yield* Fiber.join(fiber1);
 
-        yield* TestClock.adjust("6 seconds");
+          yield* TestClock.adjust("6 seconds");
 
-        const startTime = yield* TestClock.currentTimeMillis;
-        const res2 = yield* cachedEffect;
-        const endTime = yield* TestClock.currentTimeMillis;
+          const startTime =
+            yield* TestClock.currentTimeMillis;
+          const res2 = yield* cachedEffect;
+          const endTime =
+            yield* TestClock.currentTimeMillis;
 
-        strictEqual(res2, "Success 1"); // Stale value
-        strictEqual(endTime - startTime, 0); // Immediate
+          strictEqual(res2, "Success 1"); // Stale value
+          strictEqual(endTime - startTime, 0); // Immediate
 
-        yield* TestClock.adjust("200 millis");
-        yield* Effect.yieldNow();
+          yield* TestClock.adjust("200 millis");
+          yield* Effect.yieldNow();
 
-        const res3 = yield* cachedEffect;
-        strictEqual(res3, "Success 2");
-      }),
+          const res3 = yield* cachedEffect;
+          strictEqual(res3, "Success 2");
+        }),
     );
 
-    it.scoped("should handle background refresh failures gracefully", () =>
-      Effect.gen(function* () {
-        const executionCount = yield* Ref.make(0);
-        const underlyingEffect = Ref.updateAndGet(executionCount, (n) => n + 1).pipe(
-          Effect.flatMap((count) =>
-            count === 1 ? Effect.succeed(`Success ${count}`) : Effect.fail(`Error ${count}`),
-          ),
-        );
+    it.scoped(
+      "should handle background refresh failures gracefully",
+      () =>
+        Effect.gen(function* () {
+          const executionCount = yield* Ref.make(0);
+          const underlyingEffect = Ref.updateAndGet(
+            executionCount,
+            (n) => n + 1,
+          ).pipe(
+            Effect.flatMap((count) =>
+              count === 1
+                ? Effect.succeed(`Success ${count}`)
+                : Effect.fail(`Error ${count}`),
+            ),
+          );
 
-        const cachedEffect = yield* Cache.cacheSuccessSWR(underlyingEffect, "5 seconds");
+          const cachedEffect = yield* Cache.cacheSuccessSWR(
+            underlyingEffect,
+            "5 seconds",
+          );
 
-        const res1 = yield* cachedEffect;
-        strictEqual(res1, "Success 1");
+          const res1 = yield* cachedEffect;
+          strictEqual(res1, "Success 1");
 
-        yield* TestClock.adjust("6 seconds");
+          yield* TestClock.adjust("6 seconds");
 
-        const res2 = yield* cachedEffect;
-        strictEqual(res2, "Success 1");
+          const res2 = yield* cachedEffect;
+          strictEqual(res2, "Success 1");
 
-        yield* TestClock.adjust("100 millis");
-        yield* Effect.yieldNow();
+          yield* TestClock.adjust("100 millis");
+          yield* Effect.yieldNow();
 
-        const finalCount = yield* Ref.get(executionCount);
-        strictEqual(finalCount, 2);
-      }),
+          const finalCount = yield* Ref.get(executionCount);
+          strictEqual(finalCount, 2);
+        }),
     );
   });
 });

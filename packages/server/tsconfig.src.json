@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src"],
   "exclude": ["vitest.config.ts", "src/**/*.test.ts"],
-  "references": [{ "path": "../domain" }, { "path": "../database" }],
+  "references": [
+    { "path": "../domain" },
+    { "path": "../database" }
+  ],
   "compilerOptions": {
     "types": ["node"],
     "outDir": "build/src",

@@ -1,4 +1,7 @@
-import { mergeConfig, type UserConfigExport } from "vitest/config";
+import {
+  mergeConfig,
+  type UserConfigExport,
+} from "vitest/config";
 import shared from "../../vitest.shared.js";
 
 const config: UserConfigExport = {};

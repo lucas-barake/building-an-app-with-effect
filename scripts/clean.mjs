@@ -3,7 +3,12 @@ import * as Fs from "node:fs";
 
 const dirs = [".", ...Glob.sync("packages/*/")];
 dirs.forEach((pkg) => {
-  const files = [".tsbuildinfo", "build", "dist", "coverage"];
+  const files = [
+    ".tsbuildinfo",
+    "build",
+    "dist",
+    "coverage",
+  ];
 
   files.forEach((file) => {
     Fs.rmSync(

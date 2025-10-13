@@ -16,9 +16,10 @@ const AnthropicLive = AnthropicClient.layerConfig({
   apiKey: Config.redacted("ANTHROPIC_API_KEY"),
 });
 
-export const AiLive = Layer.mergeAll(OpenAiLive, AnthropicLive).pipe(
-  Layer.provide(FetchHttpClient.layer),
-);
+export const AiLive = Layer.mergeAll(
+  OpenAiLive,
+  AnthropicLive,
+).pipe(Layer.provide(FetchHttpClient.layer));
 
 export const AiExecPlan = ExecutionPlan.make(
   {
@@ -27,7 +28,9 @@ export const AiExecPlan = ExecutionPlan.make(
     schedule: Schedule.exponential("300 millis"),
   },
   {
-    provide: AnthropicLanguageModel.model("claude-sonnet-4-0"),
+    provide: AnthropicLanguageModel.model(
+      "claude-sonnet-4-0",
+    ),
     attempts: 2,
     schedule: Schedule.exponential("300 millis"),
   },

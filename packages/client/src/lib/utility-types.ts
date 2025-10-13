@@ -21,9 +21,13 @@
  * <MyComponent open={true} onOpenChange={() => {}} mode="edit" item={{ id: "1", name: "test" }} />
  * ```
  */
-export type UpsertProps<T extends { common: any; create?: any; update: any }> = T["common"] &
+export type UpsertProps<
+  T extends { common: any; create?: any; update: any },
+> = T["common"] &
   (
-    | ({ mode: "create" } & (T["create"] extends undefined ? unknown : T["create"]))
+    | ({ mode: "create" } & (T["create"] extends undefined
+        ? unknown
+        : T["create"]))
     | ({ mode: "edit" } & T["update"])
   );
 
@@ -51,11 +55,17 @@ export type UpsertProps<T extends { common: any; create?: any; update: any }> = 
  * <MyDialog open={true} onOpenChange={() => {}} title="Edit Item" mode="edit" item={{ id: "1", name: "test" }} />
  * ```
  */
-export type UpsertDialogProps<T extends { common?: any; create?: any; update: any }> = {
+export type UpsertDialogProps<
+  T extends { common?: any; create?: any; update: any },
+> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-} & (T["common"] extends undefined ? unknown : T["common"]) &
+} & (T["common"] extends undefined
+  ? unknown
+  : T["common"]) &
   (
-    | ({ mode: "create" } & (T["create"] extends undefined ? unknown : T["create"]))
+    | ({ mode: "create" } & (T["create"] extends undefined
+        ? unknown
+        : T["create"]))
     | ({ mode: "edit" } & T["update"])
   );

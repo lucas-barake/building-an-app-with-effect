@@ -1,3 +1,5 @@
 {
-  "*.{cjs,css,html,js,jsx,json,md,mdx,mjs,scss,ts,tsx,yaml,yml}": ["prettier --write"]
+  "*.{cjs,css,html,js,jsx,json,md,mdx,mjs,scss,ts,tsx,yaml,yml}": [
+    "prettier --write"
+  ]
 }

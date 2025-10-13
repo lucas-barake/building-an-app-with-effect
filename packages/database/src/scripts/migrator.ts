@@ -10,9 +10,15 @@ NodeRuntime.runMain(
   Effect.gen(function* () {
     const migrations = yield* PgMigrator.run({
       loader: PgMigrator.fromFileSystem(
-        path.join(fileURLToPath(new URL(".", import.meta.url)), "../migrations"),
+        path.join(
+          fileURLToPath(new URL(".", import.meta.url)),
+          "../migrations",
+        ),
       ),
-      schemaDirectory: path.join(fileURLToPath(new URL(".", import.meta.url)), "../migrations/sql"),
+      schemaDirectory: path.join(
+        fileURLToPath(new URL(".", import.meta.url)),
+        "../migrations/sql",
+      ),
     });
 
     if (migrations.length === 0) {
@@ -20,7 +26,9 @@ NodeRuntime.runMain(
     } else {
       yield* Effect.log("Migrations applied:");
       for (const [id, name] of migrations) {
-        yield* Effect.log(`- ${id.toString().padStart(4, "0")}_${name}`);
+        yield* Effect.log(
+          `- ${id.toString().padStart(4, "0")}_${name}`,
+        );
       }
     }
   }).pipe(Effect.provide([NodeContext.layer, PgLive])),

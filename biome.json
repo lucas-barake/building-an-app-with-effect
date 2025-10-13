@@ -194,7 +194,9 @@
       }
     },
     {
-      "includes": ["packages/{domain,database}/**/*.{ts,tsx,js,jsx}"],
+      "includes": [
+        "packages/{domain,database}/**/*.{ts,tsx,js,jsx}"
+      ],
       "linter": {
         "rules": {
           "style": {

@@ -10,25 +10,34 @@ const Result = Schema.Struct({
   }),
 });
 
-export class Evaluator extends Effect.Service<Evaluator>()("@org/Evaluator", {
-  dependencies: [AiLive],
-  effect: Effect.gen(function* () {
-    const execPlan = yield* AiExecPlan.withRequirements;
+export class Evaluator extends Effect.Service<Evaluator>()(
+  "@org/Evaluator",
+  {
+    dependencies: [AiLive],
+    effect: Effect.gen(function* () {
+      const execPlan = yield* AiExecPlan.withRequirements;
 
-    return {
-      evaluate: Effect.fn("Evaluator.evaluate")(
-        (query: string, potentialCandidates: ReadonlyArray<SearchItem>) =>
-          AiLanguageModel.generateObject({
-            prompt: makePrompt(query, potentialCandidates),
-            schema: Result,
-          }),
-        Effect.withExecutionPlan(execPlan),
-        Effect.map((result) => result.value.satisfying),
-        Effect.orDie,
-      ),
-    } as const;
-  }),
-}) {}
+      return {
+        evaluate: Effect.fn("Evaluator.evaluate")(
+          (
+            query: string,
+            potentialCandidates: ReadonlyArray<SearchItem>,
+          ) =>
+            AiLanguageModel.generateObject({
+              prompt: makePrompt(
+                query,
+                potentialCandidates,
+              ),
+              schema: Result,
+            }),
+          Effect.withExecutionPlan(execPlan),
+          Effect.map((result) => result.value.satisfying),
+          Effect.orDie,
+        ),
+      } as const;
+    }),
+  },
+) {}
 
 const makePrompt = (
   query: string,

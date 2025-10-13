@@ -7,7 +7,8 @@ export default {
   meta: {
     type: "problem",
     docs: {
-      description: "Enforce namespace import for React instead of named imports.",
+      description:
+        "Enforce namespace import for React instead of named imports.",
       category: "Best Practices",
       recommended: true,
       url: null,
@@ -17,7 +18,8 @@ export default {
     messages: {
       useNamespaceImport:
         'Use namespace import (import React from "react") instead of named imports from "react".',
-      useNamespaceUsage: "Use '{{reactNamespace}}.{{importedName}}' instead of '{{localName}}'.",
+      useNamespaceUsage:
+        "Use '{{reactNamespace}}.{{importedName}}' instead of '{{localName}}'.",
     },
   },
 
@@ -31,7 +33,9 @@ export default {
           return;
         }
 
-        const namedSpecifiers = node.specifiers.filter((spec) => spec.type === "ImportSpecifier");
+        const namedSpecifiers = node.specifiers.filter(
+          (spec) => spec.type === "ImportSpecifier",
+        );
         const defaultSpecifier = node.specifiers.find(
           (spec) => spec.type === "ImportDefaultSpecifier",
         );
@@ -43,7 +47,9 @@ export default {
         if (namedSpecifiers.length > 0) {
           // Store named imports for reference during traversal
           namedSpecifiers.forEach((spec) => {
-            if (!namedImportsFromReact.has(spec.local.name)) {
+            if (
+              !namedImportsFromReact.has(spec.local.name)
+            ) {
               namedImportsFromReact.set(spec.local.name, {
                 node: spec,
                 importedName: spec.imported.name,
@@ -63,7 +69,10 @@ export default {
                 return fixer.replaceText(node, fixedImport);
               } else {
                 // Replace entire import with namespace pattern
-                return fixer.replaceText(node, targetImport);
+                return fixer.replaceText(
+                  node,
+                  targetImport,
+                );
               }
             },
           });
@@ -78,19 +87,27 @@ export default {
           return;
         }
 
-        const importInfo = namedImportsFromReact.get(localName);
+        const importInfo =
+          namedImportsFromReact.get(localName);
         const { importedName } = importInfo;
 
         // Skip fixing in certain contexts where replacement would be incorrect
         const parent = identifierNode.parent;
 
         // Skip original import specifier
-        if (parent.type === "ImportSpecifier" && parent.local === identifierNode) {
+        if (
+          parent.type === "ImportSpecifier" &&
+          parent.local === identifierNode
+        ) {
           return;
         }
 
         // Skip property key usage (non-shorthand)
-        if (parent.type === "Property" && parent.key === identifierNode && !parent.shorthand) {
+        if (
+          parent.type === "Property" &&
+          parent.key === identifierNode &&
+          !parent.shorthand
+        ) {
           return;
         }
 
@@ -115,7 +132,10 @@ export default {
             localName,
           },
           fix(fixer) {
-            return fixer.replaceText(identifierNode, `${reactNamespace}.${importedName}`);
+            return fixer.replaceText(
+              identifierNode,
+              `${reactNamespace}.${importedName}`,
+            );
           },
         });
       },
@@ -132,13 +152,20 @@ export default {
         // Ensure it's used as a component name (part of opening/closing tag)
         const parent = jsxIdentifierNode.parent;
         if (
-          !(parent.type === "JSXOpeningElement" && parent.name === jsxIdentifierNode) &&
-          !(parent.type === "JSXClosingElement" && parent.name === jsxIdentifierNode)
+          !(
+            parent.type === "JSXOpeningElement" &&
+            parent.name === jsxIdentifierNode
+          ) &&
+          !(
+            parent.type === "JSXClosingElement" &&
+            parent.name === jsxIdentifierNode
+          )
         ) {
           return;
         }
 
-        const importInfo = namedImportsFromReact.get(localName);
+        const importInfo =
+          namedImportsFromReact.get(localName);
         const { importedName } = importInfo;
 
         context.report({
@@ -150,7 +177,10 @@ export default {
             localName,
           },
           fix(fixer) {
-            return fixer.replaceText(jsxIdentifierNode, `${reactNamespace}.${importedName}`);
+            return fixer.replaceText(
+              jsxIdentifierNode,
+              `${reactNamespace}.${importedName}`,
+            );
           },
         });
       },
