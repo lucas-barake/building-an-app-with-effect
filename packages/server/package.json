@@ -48,7 +48,6 @@
     "@opentelemetry/sdk-trace-base": "*",
     "@opentelemetry/sdk-trace-node": "*",
     "@opentelemetry/semantic-conventions": "*",
-    "@org/database": "workspace:^",
     "@org/domain": "workspace:^",
     "@testcontainers/postgresql": "^10.28.0",
     "effect": "*",

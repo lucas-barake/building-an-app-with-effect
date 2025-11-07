@@ -7,9 +7,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@org/domain": ["../domain/src/index.js"],
-      "@org/domain/*": ["../domain/src/*.js"],
-      "@org/database": ["../database/src/index.js"],
-      "@org/database/*": ["../database/src/*.js"]
+      "@org/domain/*": ["../domain/src/*.js"]
     }
   },
   "references": [

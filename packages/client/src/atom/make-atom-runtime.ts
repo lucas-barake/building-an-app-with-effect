@@ -1,5 +1,7 @@
 import { Atom } from "@effect-atom/atom-react";
-import { Layer, Logger, LogLevel } from "effect";
+import * as Layer from "effect/Layer";
+import * as Logger from "effect/Logger";
+import * as LogLevel from "effect/LogLevel";
 import { envVars } from "../lib/env-vars";
 
 export const makeAtomRuntime = Atom.context({

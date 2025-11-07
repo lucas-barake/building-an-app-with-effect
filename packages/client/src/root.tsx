@@ -8,7 +8,6 @@ import { createRoot } from "react-dom/client";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "./components/providers/theme-provider.tsx";
 import "./index.css";
-import { KaServices } from "./ka-services.tsx";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
@@ -24,7 +23,6 @@ createRoot(document.getElementById("root")!).render(
     <RegistryProvider>
       <Toaster />
       <ThemeProvider>
-        <KaServices />
         <RouterProvider router={router} />
       </ThemeProvider>
     </RegistryProvider>

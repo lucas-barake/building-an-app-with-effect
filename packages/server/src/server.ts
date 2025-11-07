@@ -7,10 +7,11 @@ import * as HttpMiddleware from "@effect/platform/HttpMiddleware";
 import * as HttpServerResponse from "@effect/platform/HttpServerResponse";
 import * as RpcSerialization from "@effect/rpc/RpcSerialization";
 import * as RpcServer from "@effect/rpc/RpcServer";
-import { RpcDef } from "@org/domain/rpc-def";
+import { DomainRpc } from "@org/domain/example-rpc";
 import * as Layer from "effect/Layer";
 import { createServer } from "node:http";
-import { RpcDefLive } from "./rpc-def-live.js";
+import { EventStreamRpcLive } from "./event-stream-rpc-live.js";
+import { ExampleRpcLive } from "./example-rpc-live.js";
 
 const HealthRouter = HttpLayerRouter.use((router) =>
   router.add(
@@ -21,12 +22,12 @@ const HealthRouter = HttpLayerRouter.use((router) =>
 );
 
 const RpcRouter = RpcServer.layerHttpRouter({
-  group: RpcDef,
+  group: DomainRpc,
   path: "/rpc",
   protocol: "http",
   spanPrefix: "rpc",
 }).pipe(
-  Layer.provide(RpcDefLive),
+  Layer.provide([ExampleRpcLive, EventStreamRpcLive]),
   Layer.provide(RpcSerialization.layerNdjson),
 );
 
