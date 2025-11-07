@@ -12,7 +12,7 @@ import * as Random from "effect/Random";
 const localDelay = <A, E, R>(
   self: Effect.Effect<A, E, R>,
 ) =>
-  Random.nextRange(300, 400).pipe(
+  Random.nextRange(400, 600).pipe(
     Effect.flatMap((ms) => Effect.sleep(ms)),
     Effect.zipRight(self),
   );

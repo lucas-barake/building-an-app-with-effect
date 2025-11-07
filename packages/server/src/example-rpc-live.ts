@@ -21,7 +21,7 @@ export const ExampleRpcLive = ExampleRpc.toLayer(
           value: payload,
         });
 
-        items.push(item);
+        items.unshift(item);
 
         yield* eventStreamHub.notifyAll(item);
 

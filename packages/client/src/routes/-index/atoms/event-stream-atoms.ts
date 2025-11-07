@@ -1,6 +1,7 @@
 import { makeAtomRuntime } from "@/atom/make-atom-runtime";
 import { Atom, Registry } from "@effect-atom/atom-react";
 import { EventStreamEvent } from "@org/domain/example-rpc";
+import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as PubSub from "effect/PubSub";
@@ -17,7 +18,7 @@ export class EventStream extends Effect.Service<EventStream>()(
         yield* PubSub.unbounded<EventStreamEvent>();
       return {
         changes: Stream.fromPubSub(pubSub),
-        offer: (event: EventStreamEvent) =>
+        publish: (event: EventStreamEvent) =>
           pubSub.publish(event),
       };
     }),
@@ -50,18 +51,22 @@ export const eventStreamAtom = runtime
 
       const ka = source.pipe(
         Stream.filter((event) => event._tag === "Ka"),
-        Stream.timeout("5 seconds"),
+        Stream.timeoutFail(
+          () => new Cause.TimeoutException(),
+          "5 seconds",
+        ),
       );
 
       const sync = source.pipe(
         Stream.filter((event) => event._tag !== "Ka"),
-        Stream.tap((event) => eventStream.offer(event)),
+        Stream.tap((event) => eventStream.publish(event)),
       );
 
       return Stream.merge(ka, sync, {
         haltStrategy: "either",
       });
     }).pipe(
+      Effect.tapErrorCause(Effect.logError),
       prefixLogs("EventStream"),
       Effect.retry({
         times: 3,

@@ -2,6 +2,7 @@ import * as Rpc from "@effect/rpc/Rpc";
 import * as RpcGroup from "@effect/rpc/RpcGroup";
 import * as Schema from "effect/Schema";
 
+// _tag === "ExampleItem"
 export class ExampleItem extends Schema.TaggedClass<ExampleItem>(
   "ExampleItem",
 )("ExampleItem", {

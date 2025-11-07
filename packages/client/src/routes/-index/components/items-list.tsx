@@ -1,5 +1,14 @@
-import { Result, useAtomValue } from "@effect-atom/atom-react";
-import { AlertCircleIcon, CircleIcon, ClipboardIcon, LoaderIcon } from "lucide-react";
+import {
+  Result,
+  useAtomValue,
+} from "@effect-atom/atom-react";
+import * as Cause from "effect/Cause";
+import {
+  AlertCircleIcon,
+  CircleIcon,
+  ClipboardIcon,
+  LoaderIcon,
+} from "lucide-react";
 import React from "react";
 import { getAtom } from "../atoms/example-atoms";
 
@@ -12,10 +21,12 @@ export const ItemsList: React.FC = () => {
         .onInitialOrWaiting(() => (
           <div className="p-12 text-center">
             <LoaderIcon className="h-8 w-8 text-primary mx-auto mb-3 animate-spin" />
-            <p className="text-muted-foreground">Loading tasks...</p>
+            <p className="text-muted-foreground">
+              Loading tasks...
+            </p>
           </div>
         ))
-        .onError((error) => (
+        .onFailure((cause) => (
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-destructive/10 mb-3">
               <AlertCircleIcon className="w-6 h-6 text-destructive-text" />
@@ -24,7 +35,7 @@ export const ItemsList: React.FC = () => {
               Failed to load tasks
             </p>
             <p className="text-muted-foreground text-sm">
-              {String(error)}
+              {Cause.pretty(cause)}
             </p>
           </div>
         ))
@@ -35,7 +46,9 @@ export const ItemsList: React.FC = () => {
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-3">
                   <ClipboardIcon className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <p className="text-muted-foreground">No tasks yet</p>
+                <p className="text-muted-foreground">
+                  No tasks yet
+                </p>
                 <p className="text-muted-foreground text-sm mt-1">
                   Add your first task above to get started
                 </p>

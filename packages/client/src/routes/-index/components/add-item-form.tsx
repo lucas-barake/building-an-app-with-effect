@@ -1,4 +1,4 @@
-import { Result, useAtom } from "@effect-atom/atom-react";
+import { useAtom } from "@effect-atom/atom-react";
 import { LoaderIcon } from "lucide-react";
 import React from "react";
 import { addAtom } from "../atoms/example-atoms";

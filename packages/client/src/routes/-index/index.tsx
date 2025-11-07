@@ -3,6 +3,7 @@ import React from "react";
 import { eventStreamAtom } from "./atoms/event-stream-atoms";
 import { syncAtom } from "./atoms/example-atoms";
 import { AddItemForm } from "./components/add-item-form";
+import { EventStreamBanner } from "./components/event-stream-banner";
 import { ItemsList } from "./components/items-list";
 
 export const Page: React.FC = () => {
@@ -21,8 +22,8 @@ export const Page: React.FC = () => {
           </p>
         </div>
 
+        <EventStreamBanner />
         <AddItemForm />
-
         <ItemsList />
       </div>
     </div>
