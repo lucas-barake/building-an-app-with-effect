@@ -24,7 +24,7 @@ const HealthRouter = HttpLayerRouter.use((router) =>
 const RpcRouter = RpcServer.layerHttpRouter({
   group: DomainRpc,
   path: "/rpc",
-  protocol: "http",
+  protocol: "websocket",
   spanPrefix: "rpc",
 }).pipe(
   Layer.provide([ExampleRpcLive, EventStreamRpcLive]),
